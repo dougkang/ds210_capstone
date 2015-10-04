@@ -3,9 +3,9 @@
 from instagram.client import InstagramAPI
 
 # Initialize our API
-client_id = 'aa0986f05f244de6b86a3cc3026914d7'
-access_token = '17550552.aa0986f.3ce05672e8ff4e5f8daea918d25ceb43'
-client_secret = '97c05f600a634affb2645d4addeaa808'
+client_id = ''
+access_token = ''
+client_secret = ''
 api = InstagramAPI(
     access_token=access_token, 
     client_id = client_id, 
