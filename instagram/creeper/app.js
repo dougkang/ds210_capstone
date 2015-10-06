@@ -35,7 +35,7 @@ app.get('/notify/geo/:id', function(req, res) {
 // Actual Notification endpoint
 app.post('/notify/geo/:id', function(req, res) {
   console.log("Incoming notification: " + JSON.stringify(req.body))
-  save(cfg.collection, req.body, function(err, res) {
+  save(cfg.mongo.collection, req.body, function(err) {
     if (err) {
       console.log("ERROR: could not save notification: " + err)
       res.status(500).send(err)
