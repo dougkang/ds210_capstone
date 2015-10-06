@@ -4,12 +4,18 @@
   "description": "listens for instagram posts like a creeper",
   "main": "app.js",
   "scripts": {
+    "sub": "sh scripts/subscribe.sh",
+    "unsub": "sh scripts/unsubscribe.sh",
     "server": "node app.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.13.3",
-    "jade": "^1.11.0"
+    "jade": "^1.11.0",
+    "body-parser": "~1.14.1",
+    "mongodb": "~2.0.45",
+    "instagram-node": "~0.5.8",
+    "async": "~1.4.2"
   }
 }
