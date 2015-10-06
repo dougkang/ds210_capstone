@@ -2,14 +2,22 @@ var express = require('express');
 var path = require('path');
 var cfg = require('./conf/dev');
 var app = express();
+var bodyParser = require('body-parser');
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade'); 
 
 app.use(express.static('public'));
 
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
 // TODO doug Better logging
 // TODO rosalind Initialize mongo here, put configuration details in conf/dev.js
+
+var mongodb = require('mongodb');
+var MongoClient=mongodb.MongoClient;
 
 var save = function(coll, data, cb) {
   // TODO rosalind
@@ -18,7 +26,26 @@ var save = function(coll, data, cb) {
   // cb is a function that takes two arguments: 
   //   1. an error object if an error occurred, otherwise, null
   //   2. the object saved
-  cb("Error: Not implemented", null)
+  var url = 'mongodb://'+cfg.mongo.host + ':' + cfg.mongo.port.toString() + '/' + cfg.mongo.db;
+  MongoClient.connect(url, function (err, db) {
+      if (err) {
+          cb(err, null);
+      }
+      else {
+          var collection = db.collection(coll);
+          collection.save(data, function (err) {
+              if (err) {
+                  cb(err);
+              }
+              else {
+		  cb(null);
+		  db.close();
+              }
+          });
+      }
+  });
+
+  //cb("Error: Not implemented", null)
 }
 
 // Index endpoint (to make sure everything is good) 
