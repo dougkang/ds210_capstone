@@ -1,0 +1,7 @@
+**/credentials.sh
+**/.drake
+**/drake.log
+**/dataset/**
+venv
+*.swp
+
