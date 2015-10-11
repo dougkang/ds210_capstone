@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+from datetime import datetime
 from pymongo import MongoClient
 from instagram.client import InstagramAPI
 from instagram.bind import InstagramAPIError
@@ -53,18 +54,20 @@ for i,line in enumerate(open(sys.argv[1]).readlines()):
         "feed": [ { 
           "id": x.id,
           "created": x.created_time, 
-          "caption": x.caption.text if x.caption is not None else "",
-          "like_count": x.like_count if x.like_count is not None else 0,
-          "link": x.link if x.link is not None else "", 
-          "type": x.type if x.type is not None else "unknown",
-          "tags": [ y.name for y in x.tags ] if x.tags is not None else [],
+          "updated": datetime.now(),
+          "caption": x.caption.text if hasattr(x.caption, "caption") else "",
+          "like_count": x.like_count if hasattr(x, "like_count") else 0,
+          "link": x.link if hasattr(x, "link") else None, 
+          "type": x.type if hasattr(x, "type") else "unknown",
+          "tags": [ y.name for y in x.tags ] if hasattr(x, "tags") else [],
+          "location": x.location if hasattr(x, "location") else None,
           "images": {
             "low_resolution": x.images["low_resolution"].url,
             "standard_resolution": x.images["standard_resolution"].url,
             "thumbnail": x.images["thumbnail"].url
           }
         } for x in media_feed[:feed_limit] ] }
-    mongo.insert_one(doc)
+    mongo.update_one({ "_id": uid }, { "$set":  doc }, upsert=True)
     count = count + 1
   except InstagramAPIError as e:
     if e.status_code == 400:

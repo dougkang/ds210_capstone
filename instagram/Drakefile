@@ -1,5 +1,5 @@
 %all <- dataset/train.csv,dataset/dev.csv,dataset/test.csv:
-  echo "generating dataset"
+  echo "Dataset generated!"
 
 dataset/users.csv <-
   mongoexport --db=instagram --collection=users --fields='_id,username' --type=csv --out=$OUTPUT
@@ -13,4 +13,12 @@ dataset/train.csv,dataset/dev.csv,dataset/test.csv <- dataset/users.csv
   cat /tmp/data.csv | tail -n$(expr $N - 11000) > $OUTPUT2
   rm /tmp/data.csv
 
+dataset/feeds.json <-
+  mongoexport --db=instagram --collection=media_feeds --out=$OUTPUT
+
+dataset/export.tgz <- dataset/feeds.json, dataset/users.csv
+  tar czvf $OUTPUT $INPUT0 $INPUT1
+
+%export <- dataset/export.tgz
+  echo "Export completed!"
   
