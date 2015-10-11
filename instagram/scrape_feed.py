@@ -60,7 +60,10 @@ for i,line in enumerate(open(sys.argv[1]).readlines()):
           "link": x.link if hasattr(x, "link") else None, 
           "type": x.type if hasattr(x, "type") else "unknown",
           "tags": [ y.name for y in x.tags ] if hasattr(x, "tags") else [],
-          "location": x.location if hasattr(x, "location") else None,
+          "location": { \
+              "id": x.location.id, "name": x.location.name, \
+              "latitude": x.location.latitude, "longitude": x.location.longitude \
+              } if hasattr(x, "location") else None,
           "images": {
             "low_resolution": x.images["low_resolution"].url,
             "standard_resolution": x.images["standard_resolution"].url,
