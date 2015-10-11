@@ -1,0 +1,16 @@
+%all <- dataset/train.csv,dataset/dev.csv,dataset/test.csv:
+  echo "generating dataset"
+
+dataset/users.csv <-
+  mongoexport --db=instagram --collection=users --fields='_id,username' --type=csv --out=$OUTPUT
+
+dataset/train.csv,dataset/dev.csv,dataset/test.csv <- dataset/users.csv
+  echo "Generating datasets: train: $OUTPUT1, dev: $OUTPUT2, test: $OUTPUT3"
+  N=$(cat users.json | wc -l)
+  cat $INPUT | gshuf > /tmp/data.csv
+  cat /tmp/data.csv | head -n10000 > $OUTPUT0
+  cat /tmp/data.csv | head -n11000 | tail -n1000 > $OUTPUT1
+  cat /tmp/data.csv | tail -n$(expr $N - 11000) > $OUTPUT2
+  rm /tmp/data.csv
+
+  
