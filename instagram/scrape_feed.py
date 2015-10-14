@@ -55,10 +55,11 @@ for i,line in enumerate(open(sys.argv[1]).readlines()):
           "id": x.id,
           "created": x.created_time, 
           "updated": datetime.now(),
-          "caption": x.caption.text if hasattr(x.caption, "caption") else "",
+          "caption": x.caption.text if hasattr(x.caption, "text") else "",
           "like_count": x.like_count if hasattr(x, "like_count") else 0,
           "link": x.link if hasattr(x, "link") else None, 
           "type": x.type if hasattr(x, "type") else "unknown",
+          "filter": x.filter if hasattr(x, "filter") else None,
           "tags": [ y.name for y in x.tags ] if hasattr(x, "tags") else [],
           "location": { \
               "id": x.location.id, "name": x.location.name, \
