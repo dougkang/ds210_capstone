@@ -61,8 +61,10 @@ for i,line in enumerate(open(sys.argv[1]).readlines()):
           "filter": x.filter if hasattr(x, "filter") else None,
           "tags": [ y.name for y in x.tags ] if hasattr(x, "tags") else [],
           "location": { \
-              "id": x.location.id, "name": x.location.name, \
-              "latitude": x.location.latitude, "longitude": x.location.longitude \
+              "id": x.location.id, 
+              "name": x.location.name if hasattr(x.location, "name") else None, \
+              "latitude": x.location.latitude if hasattr(x.location, "latitude") else None, \
+              "longitude": x.location.longitude if hasattr(x.location, "longitude") else None \
               } if hasattr(x, "location") else None,
           "images": {
             "low_resolution": x.images["low_resolution"].url,
