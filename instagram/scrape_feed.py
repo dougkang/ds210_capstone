@@ -50,7 +50,6 @@ for i,line in enumerate(open(sys.argv[1]).readlines()):
     print >> sys.stderr
     print >> sys.stderr, "%s|%s has %d entries" % (uid, uname, len(media_feed))
     doc = {
-        "_id": uid,
         "feed": [ { 
           "id": x.id,
           "created": x.created_time, 
