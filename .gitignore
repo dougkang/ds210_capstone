@@ -2,6 +2,9 @@
 **/.drake
 **/drake.log
 **/dataset/**
+**/.ipynb_checkpoints
+*.pyc
+*.pickle
 venv
 *.swp
 
