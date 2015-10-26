@@ -153,3 +153,11 @@ mkdir images
 
 # http://tleyden.github.io/blog/2014/10/25/running-caffe-on-aws-gpu-instance-via-docker/
 # http://playittodeath.ru/how-to-install-caffe-on-mac-os-x-yosemite-10-10-4/
+
+
+#Setup web.py service
+conda install -c https://conda.anaconda.org/dmnapolitano web.py
+
+
+
+

@@ -18,3 +18,6 @@ http://www.softlayer.com/data-centers
 
 
 curl 'https://<username>:<api_key>@api.softlayer.com/rest/v3.1/SoftLayer_Product_Order/placeOrder' --data @- | jq -r '.placedOrder.items[] | select(.itemId == 4069) | {id}'
+
+
+SL543025
