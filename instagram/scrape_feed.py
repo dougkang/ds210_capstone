@@ -63,8 +63,10 @@ for i,line in enumerate(open(sys.argv[1]).readlines()):
           "location": { \
               "id": x.location.id, 
               "name": x.location.name if hasattr(x.location, "name") else None, \
-              "latitude": x.location.latitude if hasattr(x.location, "latitude") else None, \
-              "longitude": x.location.longitude if hasattr(x.location, "longitude") else None \
+              "latitude": x.location.point.latitude \
+		if hasattr(x.location, "point") and hasattr(x.location.point, "latitude") else None, \
+              "longitude": x.location.point.longitude \
+		if hasattr(x.location, "point") and hasattr(x.location.point, "longitude") else None \
               } if hasattr(x, "location") else None,
           "images": {
             "low_resolution": x.images["low_resolution"].url,
