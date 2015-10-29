@@ -24,14 +24,20 @@ class InstaModel(object):
     print >> sys.stderr, "[%s] features: %s" % (uid, str(Y_feat.shape))
     Y_loc = self.cm.predict(uid, Y_feat)
     print >> sys.stderr, "[%s] %d locations found" % (uid, len(Y_loc))
-    return Y_loc
+
+    total = sum(Y_loc.values())
+    res = dict([(k, float(v) / total) for k,v in Y_loc.items() ])
+
+    return res
 
 class Server(object):
 
   def __init__(self, models, weights):
     self._mw = zip(models, weights)
 
+
   def predict(self, uid, access):
+    # TODO it might be better to extract media feed here
     Y = {}
     for m,w in self._mw:
       Y_loc = m.predict(uid, access)
@@ -40,10 +46,14 @@ class Server(object):
           Y[k] = 0
         Y[k] = Y[k] + v*w
 
-    return sorted(Y.items(), key=lambda x: x[0], reverse = True)
+    total = sum(Y.values())
+    res = [ (k, (float(v) / total)) for k,v in Y.items() ]
+
+    return sorted(res, key=lambda x: x[1], reverse = True)
 
 if __name__ == '__main__':
 
+  # Extract config information from args and supplied config
   parser = argparse.ArgumentParser()
   parser.add_argument('--cfg', type=str, required=True, help="path to config")
   parser.add_argument('--port', type=int, default=8080, help="port")
@@ -53,6 +63,7 @@ if __name__ == '__main__':
   config.read(args.cfg)
   print config
 
+  # Connect to mongo
   host = config.get('mongo', 'host')
   port = config.getint('mongo', 'port')
   db = config.get('mongo', 'db')
@@ -76,6 +87,7 @@ if __name__ == '__main__':
     weights.append(config.getfloat('text', 'weight'))
     print >> sys.stderr, "[server] Loaded image model"
 
+  # TODO Add Image Model
   # print >> sys.stderr, "[server] Loading image model"
   # Construct Image InstaModel
   # with open(config.get('image', 'vocab')) as f_vocab:
