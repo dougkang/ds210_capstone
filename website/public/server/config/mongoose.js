@@ -5,7 +5,6 @@ var fs = require('fs');
 // require path for getting the models path
 var path = require('path');
 // connect to the db!
-// mongoose.connect('mongodb://localhost/full_MEAN-demo');
 mongoose.connect('mongodb://localhost/w210project');
 // create a variable that points to the path where all of the models live
 var models_path = path.join(__dirname, './../models');
