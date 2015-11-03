@@ -25,6 +25,12 @@ curl -X DELETE http://localhost:8080/resources/23
 
 curl -X POST  -H "Content-Type: application/json" -d '{"title":"a title","description":"a description","type":"a type","author":"an author"}' -i http://localhost:8080/resources/
 
+curl -X POST  -H "Content-Type: application/json" -d '{"title":"a title","description":"a description","type":"a type","author":"an author"}' -i http://119.81.249.157:3000/resources/1
 
 
+curl -X PUT  -H "Content-Type: application/json" -d '{"id":"23", "title":"a title","description":"a description","type":"a type","author":"an author"}' -i http://119.81.249.157:3000/resources/23
 
+curl -vX POST  -H "Content-Type: application/json" -d @query.json -i http://119.81.249.157:3000/resources/1
+
+#copy remote query file to local
+scp root@119.81.249.157:dataset/query.json .

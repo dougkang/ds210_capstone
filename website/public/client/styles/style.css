@@ -1,0 +1,11 @@
+.add-btn{
+	background-color: blue; color:white; border:none;
+}
+.remove-btn{
+	background-color: red; color:white; border:none;
+}
+.edit-btn{
+	background-color: green; color:white; border:none; 
+	text-decoration: none; font-size:12px; padding:3px;
+}
+.remove-btn,.edit-btn{display: inline-block; vertical-align: top}
