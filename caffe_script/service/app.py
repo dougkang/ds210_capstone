@@ -1,12 +1,12 @@
 import web
 import json
 from controller import Controller
+from baseline import Baseline
 
 urls = (
     r'/resources(?:/(?P<resource_id>[0-9]+))?',
     'ResourceController',
 )
-
 
 class ResourceController(Controller):
 
@@ -14,8 +14,11 @@ class ResourceController(Controller):
         return "list resources", format
 
     def baseline(self):
-        resource = json.loads(web.data())
-        return "created resource", resource
+        request = json.loads(web.data())
+        b = Baseline()
+        respond = b.baseline_run(request)
+        
+        return respond
         
 ## ORIGINAL RESTFUL CONTROLLER
 #     def get(self, resource_id):
