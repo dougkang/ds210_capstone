@@ -1,14 +1,37 @@
-<div>
-<!-- <div ng-controller='usersListCtrl'> -->
-	<form>
-		<input type='text' ng-model='newUser.name'>
-		<input class='add-btn' type='submit' value='Add' ng-click='addUser()'>
-	</form>
-	<ul>
-		<li ng-repeat='user in users'>
-			{{user.name}}
-			<input class='remove-btn' type='submit' value='Remove' ng-click='removeUser(user)'>
-			<a class='edit-btn' href="/edit/{{users.indexOf(user)}}">Edit</a>
-		</li>
-	</ul>
+<div id="background-style">
+	<div class="container-fluid" id="main-container">
+
+		<div class='row'>
+			<div class='col-sm-12'>
+				<h1 class='text-center'>Experience the Future of Recommendation</h1>
+				<h3 class='text-center'>Discover unique locations socially, visually, personally</h3>
+			</div>
+		</div>
+
+		<div class='row'>
+			<div id='transparent-box'>
+				<p>
+					Visiting a new place?
+					Time to do some TripAdvisor and Lonely Planet research? 
+					But what if you are just worried about hitting all the tourist traps?
+					What if you just want to really experience the place, the way how others, like you, experience it? 
+				</p>
+	 			<p>
+					For the adventurous you, we humbly offer you the social recommendation engine of the future. By logging into your Instagram account, we would analyze your instagram image and metadata, and match you with potentially interesting places visited by other local instagrammers with similar preferences to you.
+	 			</p>
+				<p>
+					It's time to go off-the-beaten-path. Please login and experience the world similar to others just like you:			
+				</p> 
+				<a id='login-btn' href="/main/">
+  				<img src="../../img/insta_button.png">
+				</a>
+
+ 			</div>
+		</div>
+#FBE28D
+#FDFAC9
+
+
+
+	</div> <!-- End of container-fluid -->
 </div>

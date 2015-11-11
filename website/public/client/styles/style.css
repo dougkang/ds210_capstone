@@ -1,3 +1,35 @@
+/* Login Page */
+#main-container {
+/*  background-image: url("../img/san-francisco.png");
+  background-repeat: no-repeat ;
+  background-size:cover;*/
+
+  background: #000 url("../img/san-francisco.png") no-repeat center center fixed;
+
+  /**for Safari,Chrome**/
+  -webkit-background-size: cover;
+  /**for Firefox**/
+  -moz-background-size: cover;
+  /**for Opera**/
+  -o-background-size: cover;
+  /**for other browsers**/
+  background-size: cover;
+  height:800px;
+}
+
+#transparent-box {
+  background: rgba(251,226,141, 0.8);
+  margin: 50px 200px 0px 100px;
+  padding: 30px;
+}
+
+#login-btn{
+  margin: 100px auto 0px auto
+}
+
+
+/* OLD REFERENCES */
+/*
 .add-btn{
 	background-color: blue; color:white; border:none;
 }
@@ -9,3 +41,4 @@
 	text-decoration: none; font-size:12px; padding:3px;
 }
 .remove-btn,.edit-btn{display: inline-block; vertical-align: top}
+*/
