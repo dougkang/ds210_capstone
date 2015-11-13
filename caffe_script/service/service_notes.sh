@@ -44,4 +44,15 @@ scp root@119.81.249.157:dataset/query.json .
 #format that doug wants
 { u'1094301226639611969_1016687101': [ { id: "n02641379", "name": "gar, garfish, garpike, billfish, Lepisosteus osseus", "score": 4.0775785e-06 }, { id: "n03877472", "name": "pajama, pyjama, pj's, jammies", "score": 4.0775785e-06 } … ], … }` 
 
+apt-get install dsniff
+tcpkill -i eth0 host 119.81.249.157 and port 3000
+
+sudo netstat -ap | grep 3000
+kill <pid>
+kill -9 <pid>
+
+
+
+
+
 

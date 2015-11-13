@@ -10,10 +10,13 @@ myApp.config(function($routeProvider,$locationProvider){
 			templateUrl: 'partials/login.html',
 			controller: 'usersListCtrl'
 		})
-		.when('/main',{
+		.when('/main/',{
 			templateUrl: 'partials/main.html',
 			controller: 'usersDetailCtrl'
 		})		
+
+
+
 		// .when('/',{
 		// 	templateUrl: 'partials/add.html',
 		// 	controller: 'usersListCtrl'
