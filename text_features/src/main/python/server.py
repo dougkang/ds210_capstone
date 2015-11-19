@@ -3,10 +3,8 @@ import argparse
 import sys
 import pickle
 import time
-from extractor import ImageFeatureExtractor, TextFeatureExtractor
-from cluster import KMModel
 from pymongo import MongoClient
-from bottle import route, run
+from bottle import route, run, request
 
 class InstaModel(object):
   '''
@@ -14,15 +12,15 @@ class InstaModel(object):
   Given a media_feed, return a dictionary of locations and their frequency
   within the cluster
   '''
-  def __init__(self, extractor, cm):
+  def __init__(self, extractor, rm):
     self.extractor = extractor
-    self.cm = cm
+    self.rm = rm
 
   def predict(self, uid, access):
     print >> sys.stderr, "[%s] predicting cluster" % uid
     Y_feat = self.extractor.transform_uid(uid, access)
     print >> sys.stderr, "[%s] features: %s" % (uid, str(Y_feat.shape))
-    Y_loc = self.cm.predict(uid, Y_feat)
+    Y_loc = self.rm.predict(uid, Y_feat)
     print >> sys.stderr, "[%s] %d locations found" % (uid, len(Y_loc))
 
     total = sum(Y_loc.values())
@@ -56,7 +54,7 @@ if __name__ == '__main__':
   # Extract config information from args and supplied config
   parser = argparse.ArgumentParser()
   parser.add_argument('--cfg', type=str, required=True, help="path to config")
-  parser.add_argument('--port', type=int, default=8080, help="port")
+  parser.add_argument('--port', type=int, help="port")
   args = parser.parse_args()
 
   config = ConfigParser.ConfigParser()
@@ -69,36 +67,18 @@ if __name__ == '__main__':
   db = config.get('mongo', 'db')
   print >> sys.stderr, "[server] Connecting to %s:%d/%s" % (host, port, db)
   client = MongoClient(host, port)
+  location_collection = client[db][config.get('server', 'location_collection')]
 
   models = []
   weights = []
 
-  print >> sys.stderr, "[server] Loading text model"
-  # Construct Text InstaModel
-  with \
-      open(config.get('text', 'tfidf')) as f_tfidf, \
-      open(config.get('text', 'kmeans')) as f_km:
-    coll = config.get('text', 'coll')
-    tfidf = pickle.load(f_tfidf)
-    km = pickle.load(f_km)
-    extractor = TextFeatureExtractor(tfidf)
-    cm = KMModel(km, client[db], coll)
-    models.append(InstaModel(extractor, cm))
-    weights.append(config.getfloat('text', 'weight'))
-    print >> sys.stderr, "[server] Loaded image model"
-
-  # TODO Add Image Model
-  # print >> sys.stderr, "[server] Loading image model"
-  # Construct Image InstaModel
-  # with open(config.get('image', 'vocab')) as f_vocab:
-  #   coll = config.get('image', 'coll')
-  #   url = config.get('image', 'url')
-  #   vocab = pickle.load(f_vocab)
-  #   extractor = ImageFeatureExtractor(vocab, url)
-  #   cm = KMModel(km, client[db], coll)))
-  #   models.append(InstaModel(extractor, cm))
-  #   weights.append(config.getfloat('image', 'weight'))
-  #   print >> sys.stderr, "[server] Loaded text model"
+  for model_name in config.get('server', 'models').split(','):
+    print >> sys.stderr, "[server] Loading %s model" % model_name
+    with open(config.get(model_name, 'pickle')) as f_im:
+      im = pickle.load(f_im)
+      models.append(im)
+      weights.append(config.getfloat(model_name, 'weight'))
+      print >> sys.stderr, "[server] Loaded %s model" % model_name
 
   print >> sys.stderr, "[server] found %d models" % len(models)
   print >> sys.stderr, "[server] found %d weights" % len(weights)
@@ -110,17 +90,36 @@ if __name__ == '__main__':
     print >> sys.stderr, "[server] status request"
     return { 'status': 'OK' }
 
+  @route('/location/<lid>')
+  def location(lid):
+    now = time.time()
+    res = location_collection.find_one({ "_id": int(lid) })
+    res['id'] = lid
+    res['latency'] = (time.time() - now) * 1000
+    del res['_id']
+    return res
+
   @route('/predict/<access>/<uid>')
   def predict(uid, access):
     now = time.time()
-    print >> sys.stderr, "[server] predict request: %s" % uid
-    res = server.predict(uid, access)
-    return { 
-        'uid': uid,
-        'latency': (time.time() - now) * 1000,
-        'locations': [ { 'name': k, 'score': v } for k,v in res ] }
+    th = 0.0
+    if 'th' in request.query:
+      th = float(request.query['th'])
 
-  print >> sys.stderr, "[server] Starting server at port %d" % args.port
-  run(host='localhost', port=args.port)
+    print >> sys.stderr, "[server] predict request: %s, th=%d" % (uid, th)
+    res = filter(lambda x: x[1] > th, server.predict(uid, access))
+    # Augment our result with the location information
+    res = map(lambda x: (x[0], x[1], location_collection.find_one({ "_id": int(x[0]) })), res)
+    print res
+      
+    return { 
+      'id': uid,
+      'latency': (time.time() - now) * 1000,
+      'locations': [ 
+        { 'id': k, 'name': v['city'], 'score': s, 'posts': v['posts'] } for k,s,v in res ] }
+
+  port = args.port if args.port is not None else config.getint('server', 'port')
+  print >> sys.stderr, "[server] Starting server at port %d" % port
+  run(host='localhost', port=port)
 
 
