@@ -1,11 +1,12 @@
+#!/usr/bin/env python
 import web
 import json
 from controller import Controller
 from baseline import Baseline
 
 urls = (
-    r'/resources(?:/(?P<resource_id>[0-9]+))?',
-    'ResourceController',
+    '/', 'index',
+    r'/resources(?:/(?P<resource_id>[0-9]+))?', 'ResourceController'
 )
 
 class ResourceController(Controller):
@@ -19,6 +20,12 @@ class ResourceController(Controller):
         respond = b.baseline_run(request)
         
         return respond
+
+class index:
+    def GET(self,name=''):
+        return 'Hello World'
+
+
         
 ## ORIGINAL RESTFUL CONTROLLER
 #     def get(self, resource_id):

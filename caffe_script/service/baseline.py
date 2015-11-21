@@ -14,7 +14,7 @@ import sys
 
 class Baseline:
     index=0
-    limit=1e9
+    limit=999
     num_images=0
     num_guesses=5
     images = {}
@@ -37,6 +37,7 @@ class Baseline:
            
         #for each feed_id, create image and set index for images
         for feed_id, image_url in request.iteritems():
+            
             #read json but need to handle index error as certain lines of JSON has errors
             #during as we attempt to extract the value in image_url
             try:
@@ -83,8 +84,7 @@ class Baseline:
             print("Downloading pre-trained CaffeNet model...")
 #             !caffe/scripts/download_model_binary.py caffe/models/bvlc_reference_caffenet        
             os.system(self.caffe_root+"scripts/download_model_binary.py caffe/models/bvlc_reference_caffenet")
-    
-    
+        
     #Make image predictions
     def caffe_predict(self):
         
@@ -104,6 +104,7 @@ class Baseline:
         # set net to batch size to be the total number of images
         net.blobs['data'].reshape(self.num_images,3,227,227)
 
+        
         # load labels
         imagenet_labels_filename = self.caffe_root + 'data/ilsvrc12/synset_words.txt'
         try:
@@ -140,5 +141,7 @@ class Baseline:
             top_predictions = labels[top_k]
 
             for top_prob,top_prediction in zip(top_probs,top_predictions):
-                self.predictions.setdefault(feed_id, {})
-                self.predictions[feed_id][top_prediction]=top_prob
+                self.predictions.setdefault(feed_id, [])
+                pred_id = top_prediction[:9]
+                pred_name = top_prediction[11:]
+                self.predictions[feed_id].append({"id":pred_id,"name":pred_name,"score":top_prob}) 
