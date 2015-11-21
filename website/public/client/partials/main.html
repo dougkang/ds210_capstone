@@ -1,11 +1,334 @@
-<div>Main Page</div>
+ <div id='main-container' class="container-fluid">
+
+	<nav class="navbar navbar-default">
+    <div class="navbar-header">
+      <a id='title' class="navbar-brand" href="#">&nbsp;<span id='title-name'>InstaPlaces</span> : The Future of Recommendations</a>
+    </div>
+    <div>
+      <ul class="nav navbar-nav navbar-right">
+      	<li><a href='#'>Hi, xxx  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	|</a></li>
+        <li id='logout-btn'><a href="/">Logout</a></li>
+      </ul>
+    </div>
+	</nav>
+
+	<div id='sub-container'>
+
+		<!-- Submit Form -->
+		<div id='country-submit' class='row'>
+			<div>
+				<form class="navbar-form navbar-left" role="search">
+				  <div class="form-group">
+				    <!-- <input type="text" class="form-control" placeholder="Search"> -->
+	          <label for="sel1">Please choose the country you'd like to visit:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+			      <select class="form-control" id="sel1">
+			        <option>Select Country:</option>
+			        <option>United States</option>
+			        <option>France</option>
+			        <option>China</option>
+			      </select>
+				  </div>
+				  <button id='submit-btn' type="submit" class="btn btn-primary">Submit</button>
+				</form>			
+			</div>
+		</div>		
+
+		<!-- Top 3 Recommended Cities -->
+		<div class='row'><h4 class='col-sm-12'>Our Top 3 Recommended Cities for You</h4></div>
+
+		<div id='img-row' class='row'>
+			<div class='col-sm-2'><p id='city-name'>San Francisco</p></div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpa1/t51.2885-15/s640x640/sh0.08/e35/10818008_1209542492396104_1144503542_n.jpg">
+				<p class='img-label'>@instagrammer1</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/12070951_1657984597750389_1323579535_n.jpg">
+				<p class='img-label'>@instagrammer2</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s640x640/sh0.08/e35/12139623_1677860749114910_1455021554_n.jpg">
+				<p class='img-label'>@instagrammer3</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/11232475_948726105161015_875531919_n.jpg">
+				<p class='img-label'>@instagrammer4</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpf1/t51.2885-15/e15/11032786_1042544635773660_994869219_n.jpg">
+				<p class='img-label'>@instagrammer5</p>
+			</div>
+		</div>
+			
+		<div id='img-row' class='row'>
+			<div class='col-sm-2'><p id='city-name'>Palo Alto</p></div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpa1/t51.2885-15/s640x640/sh0.08/e35/10818008_1209542492396104_1144503542_n.jpg">
+				<p class='img-label'>@instagrammer1</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/12070951_1657984597750389_1323579535_n.jpg">
+				<p class='img-label'>@instagrammer2</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s640x640/sh0.08/e35/12139623_1677860749114910_1455021554_n.jpg">
+				<p class='img-label'>@instagrammer3</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/11232475_948726105161015_875531919_n.jpg">
+				<p class='img-label'>@instagrammer4</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpf1/t51.2885-15/e15/11032786_1042544635773660_994869219_n.jpg">
+				<p class='img-label'>@instagrammer5</p>
+			</div>
+		</div>
+
+		<div id='img-row' class='row'>
+			<div class='col-sm-2'><p id='city-name'>Las Vegas</p></div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpa1/t51.2885-15/s640x640/sh0.08/e35/10818008_1209542492396104_1144503542_n.jpg">
+				<p class='img-label'>@instagrammer1</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/12070951_1657984597750389_1323579535_n.jpg">
+				<p class='img-label'>@instagrammer2</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s640x640/sh0.08/e35/12139623_1677860749114910_1455021554_n.jpg">
+				<p class='img-label'>@instagrammer3</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/11232475_948726105161015_875531919_n.jpg">
+				<p class='img-label'>@instagrammer4</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpf1/t51.2885-15/e15/11032786_1042544635773660_994869219_n.jpg">
+				<p class='img-label'>@instagrammer5</p>
+			</div>
+		</div>
+
+		<!-- User Profile -->
+		<div class='row'><h4 class='col-sm-12'>How did we make these recommendations? Well, we first learn about your personal preferences... </h4></div>
+
+		<div class='row'>
+			<div class='col-sm-3'>
+				<img class='thumbnail-img' src="https://scontent.cdninstagram.com/hphotos-xfp1/t51.2885-15/s150x150/e15/10809967_652291364889751_884245882_n.jpg">
+				<p class='img-label'>@yourInstagramID</p>
+			</div>
+		</div>
+
+		<div id='profile-row' class='row'>
+			<div class='col-sm-3'>
+				<p>We think you like the following objects:</p>
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>Ice-Cream</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>Dog</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>Motorcycle</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>xxx</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+		</div>
+
+		<div id='profile-row' class='row'>
+			<div class='col-sm-3'>
+				<p>We think your preferred style of images are:</p>
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>Minimal</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>Vintage</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>Noir</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>xxx</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+		</div>
+
+		<div id='profile-row' class='row'>
+			<div class='col-sm-3'>
+				<p>We think your preferred scenaries are:</p>
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>Beach</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>Bridge</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>Garden</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>xxx</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+		</div>
+
+		<div id='profile-row' class='row'>
+			<div class='col-sm-3'>
+				<p>We think your preferred topics are:</p>
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>xxx</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>xxx</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>xxx</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+			<div id='profile-item' class='col-sm-2'>
+				<p class='profile-text'>xxx</p>
+				<span id='info-icon' class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+			</div>
+		</div>
+
+		<!-- Relevent Instagrammers -->
+		<div class='row'><h4 class='col-sm-12'>And then we find relevan Instagrammers who are most similar to you:</h4></div>
+
+		<div id='img-row' class='row'>
+			<div class='col-sm-2'>
+				<img class='thumbnail-img' src="https://scontent.cdninstagram.com/hphotos-xpf1/t51.2885-15/s150x150/e15/10520359_267107586813711_1078566739_n.jpg">
+				<p class='img-label'>@Instagrammer1</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpa1/t51.2885-15/s640x640/sh0.08/e35/10818008_1209542492396104_1144503542_n.jpg">
+				<p class='img-label'>San Francisco</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/12070951_1657984597750389_1323579535_n.jpg">
+				<p class='img-label'>San Francisco</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s640x640/sh0.08/e35/12139623_1677860749114910_1455021554_n.jpg">
+				<p class='img-label'>Palo Alto</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/11232475_948726105161015_875531919_n.jpg">
+				<p class='img-label'>Las Vegas</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpf1/t51.2885-15/e15/11032786_1042544635773660_994869219_n.jpg">
+				<p class='img-label'>Lake Tahoe</p>
+			</div>
+		</div>
+			
+		<div id='img-row' class='row'>
+			<div class='col-sm-2'>
+				<img class='thumbnail-img' src="https://scontent.cdninstagram.com/hphotos-xpf1/t51.2885-15/s150x150/e15/10520359_267107586813711_1078566739_n.jpg">
+				<p class='img-label'>@Instagrammer2</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpa1/t51.2885-15/s640x640/sh0.08/e35/10818008_1209542492396104_1144503542_n.jpg">
+				<p class='img-label'>xxx</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/12070951_1657984597750389_1323579535_n.jpg">
+				<p class='img-label'>xxx</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s640x640/sh0.08/e35/12139623_1677860749114910_1455021554_n.jpg">
+				<p class='img-label'>xxx</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/11232475_948726105161015_875531919_n.jpg">
+				<p class='img-label'>xxx</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpf1/t51.2885-15/e15/11032786_1042544635773660_994869219_n.jpg">
+				<p class='img-label'>xxx</p>
+			</div>
+		</div>
+
+		<div id='img-row' class='row'>
+			<div class='col-sm-2'>
+				<img class='thumbnail-img' src="https://scontent.cdninstagram.com/hphotos-xpf1/t51.2885-15/s150x150/e15/10520359_267107586813711_1078566739_n.jpg">
+				<p class='img-label'>@Instagrammer3</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpa1/t51.2885-15/s640x640/sh0.08/e35/10818008_1209542492396104_1144503542_n.jpg">
+				<p class='img-label'>xxx</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/12070951_1657984597750389_1323579535_n.jpg">
+				<p class='img-label'>xxx</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s640x640/sh0.08/e35/12139623_1677860749114910_1455021554_n.jpg">
+				<p class='img-label'>xxx</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/11232475_948726105161015_875531919_n.jpg">
+				<p class='img-label'>xxx</p>
+			</div>
+			<div class='col-sm-2'>
+				<img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpf1/t51.2885-15/e15/11032786_1042544635773660_994869219_n.jpg">
+				<p class='img-label'>xxx</p>
+			</div>
+		</div>
+
+	</div>  <!-- end of sub-container -->
 
 
 
 
 
 
-<div>
+
+<!-- 
+<div class="dropdown">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    Dropdown
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li><a href="#">Action</a></li>
+    <li><a href="#">Another action</a></li>
+    <li><a href="#">Something else here</a></li>
+    <li><a href="#">Separated link</a></li>
+  </ul>
+</div>
+ -->
+
+
+
+
+</div><!-- /.container-fluid -->
+
+
+
+<!-- 
+<form class="navbar-form navbar-left" role="search">
+  <div class="form-group">
+    <input type="text" class="form-control" placeholder="Search">
+  </div>
+  <button type="submit" class="btn btn-default">Submit</button>
+</form>
+ -->
+
 <!-- <div ng-controller='usersListCtrl'> -->
 <!-- 
 	<h1>test</h1>

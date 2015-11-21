@@ -1,5 +1,5 @@
 /* Login Page */
-#main-container {
+#login-container {
 /*  background-image: url("../img/san-francisco.png");
   background-repeat: no-repeat ;
   background-size:cover;*/
@@ -19,13 +19,98 @@
 
 #transparent-box {
   background: rgba(251,226,141, 0.8);
-  margin: 50px 200px 0px 100px;
+  width: 70%;
+  margin: 50px auto 0px auto;
   padding: 30px;
+  font-size: 16px
 }
 
 #login-btn{
-  margin: 100px auto 0px auto
+  width: 195px;
+  margin: 20px auto 0px auto;
+  display: block;
 }
+
+
+/* Main Page*/
+
+#title{
+  font-size: 20px
+}
+
+#title-name{
+  font-weight: bold;
+}
+
+#logout-btn{
+  text-decoration: underline;
+  margin-right: 20px
+}
+
+#main-container{
+  margin: 20px;
+}
+
+#sub-container{
+  margin: 20px
+}
+
+#country-submit{
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+#submit-btn{
+  margin-left: 10px
+}
+
+.instagram-img{
+  width: 120px;
+  height: 120px;
+  display: block;
+  margin: 0px auto
+}
+
+#city-name{
+  margin-top: 50px; 
+  text-align: center;
+}
+
+#img-row{
+  margin:20px 0px;
+}
+
+.img-label{
+  margin-top: 10px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.thumbnail-img{
+  width: 50px;
+  height: 50px;
+  display: block;
+  margin:20px auto 10px auto;
+
+}
+
+#profile-row{
+  margin:20px 0px;  
+}
+
+#profile-item{
+  margin-top: 10px
+}
+
+.profile-text{
+  display: inline-block;
+  width: 100px
+}
+
+#info-icon{
+  display: inline-block;
+}
+
 
 
 /* OLD REFERENCES */
