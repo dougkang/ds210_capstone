@@ -82,13 +82,11 @@ def assign_airport(
   airports_df['long'] = airports_df['long'].astype(np.float)
   airports_df['id'] = airports_df.index
   airports_df = airports_df[["id", "name", "city", "country", "lat", "long"]]
-  print airports_df.head()
-  print airports_df.shape
+  print >> sys.stderr, "[assign_airport] found %d airports" % airports_df.shape[0]
 
   print >> sys.stderr, "[assign_airport] saving location information"
   client = MongoClient(host, int(port))
   mongo = client[db][location_collection]
-
   for i,r in airports_df.iterrows():
     data = { 
         'name': r['name'], 'city': r['city'], 'country': r['country'], \
@@ -96,7 +94,6 @@ def assign_airport(
     mongo.update_one({ '_id': i }, { '$set': data }, upsert = True)
 
   print >> sys.stderr, "[assign_airport] finding closest airport"
-
   nn = NearestNeighbors(1)
   nn.fit(airports_df[["lat", "long"]])
 
@@ -107,7 +104,6 @@ def assign_airport(
   ids = nn.kneighbors(
       df.loc[idxs, ['lat', 'long']], return_distance = False)
   df.loc[idxs, "airport"] = [ x[0] for x in ids ]
-  print df.shape
 
   print >> sys.stderr, "[assign_airport] cleaning up text"
 

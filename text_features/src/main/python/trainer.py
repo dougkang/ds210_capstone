@@ -7,38 +7,46 @@ import numpy as np
 from load_data import load, assign_airport
 from server import InstaModel
 
+def load(dataset_path, force_refresh = False, **kwargs):
+  if force_refresh or not os.path.isfile(dataset_path):
+    print "[trainer] loading data from scratch"
+    df = load(**kwargs)
+    print "[trainer] assigning airport"
+    df = assign_airport(df, **kwargs)
+    print "[trainer] saving dataset to %s" % dataset_path
+    df.to_csv(dataset_path, encoding='utf-8')
+  else:
+    print "[trainer] loading existing data at %s" % dataset_path
+    # Using python engine, which is slower, but was having memory issues when using
+    # the C engine
+    df = pd.read_csv(dataset_path, encoding='utf-8', engine="python")
+  return df
+
 class Trainer(object):
 
   def __init__(self, train_extractor, train_recmodel):
     self._train_extractor = train_extractor
     self._train_recmodel = train_recmodel
 
-  def _run(self, df, im_path, **kwargs):
+  def _run(self, df, im_path, df_test = None, **kwargs):
     X, y, ex = self._train_extractor(df, **kwargs)
-    rm, metrics = self._train_recmodel(X, y, **kwargs)
+    X_test = None
+    y_test = None
+    if df_test is not None:
+      X_test = ex._tfidf.transform(df_test['bow'])
+      y_test = df_test['airport']
+    rm, metrics = self._train_recmodel(X, y, X_test = X_test, y_test = y_test, **kwargs)
     m = InstaModel(ex, rm)
 
     # Save off our InstaModel
     with open(im_path, 'w') as f_im:
       pickle.dump(m, f_im)
 
-    return m
+    return (m, metrics)
 
-  def run(self, im_path, dataset_path, force_refresh = False, **kwargs):
-    if force_refresh or not os.path.isfile(dataset_path):
-      print "[trainer] loading data from scratch"
-      df = load(**kwargs)
-      print "[trainer] assigning airport"
-      df = assign_airport(df, **kwargs)
-      print "[trainer] saving dataset to %s" % dataset_path
-      df.to_csv(dataset_path, encoding='utf-8')
-    else:
-      print "[trainer] loading existing data at %s" % dataset_path
-      # Using python engine, which is slower, but was having memory issues when using
-      # the C engine
-      df = pd.read_csv(dataset_path, encoding='utf-8', engine="python")
-
-    self._run(df, im_path, **kwargs)
+  def run(self, im_path, dataset_path, force_refresh = False, df_test = None, **kwargs):
+    df = load(dataset_path, force_refresh, **kwargs)
+    return self._run(df, im_path, df_test, **kwargs)
 
 if __name__ == "__main__":
   import ConfigParser

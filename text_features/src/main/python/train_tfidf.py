@@ -14,10 +14,7 @@ def post_tfidf(df, **kwargs):
   X_bow = tfidf.fit_transform(df_bow['bow'])
   y_loc = df_bow['airport']
 
-  print "Post BOW Dataset"
-  print X_bow.shape
-  print y_loc.shape
-  print df_bow.head()
+  print "Post BOW Dataset: %s, %s" % (str(X_bow.shape), str(y_loc.shape))
 
   extractor = TextFeatureExtractor(tfidf)
 
@@ -41,13 +38,11 @@ def user_tfidf(df, loc_only = False, **kwargs):
     df_user_bow = df_user_bow.loc[pd.notnull(df_user_bow['loc'])]
 
   tfidf_user = TfidfVectorizer(stop_words='english', norm='l2', ngram_range=[1,2])
-  Y_user_bow = tfidf_user.fit_transform(df_user_bow['bow'])
-  Y_user_loc = df_user_bow['loc']
+  X_bow = tfidf_user.fit_transform(df_user_bow['bow'])
+  y_loc = df_user_bow['loc']
                      
-  print "User BOW Dataset"
-  print Y_user_bow.shape
-  print df_user_bow.head()
+  print "User BOW Dataset: %s, %s" % (str(X_bow.shape), str(y_loc.shape))
 
   extractor = TextFeatureExtractor(tfidf_user)
 
-  return (Y_user_bow, Y_user_loc, extractor)
+  return (X_bow, Y_loc, extractor)
