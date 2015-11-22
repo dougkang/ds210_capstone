@@ -15,7 +15,9 @@ class Controller:
         if resource_id=="1":
             return self.baseline()
         elif resource_id=="2":
-            return 'post_model2'
+            return self.style()
+        elif resource_id=="3":
+            return self.place()
         else:
             raise web.badrequest()
 
