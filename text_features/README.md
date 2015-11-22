@@ -10,6 +10,17 @@ optional arguments:
   --port PORT  port
 ```
 
+## Prerequisites
+
+Ensure that you have mongodb installed and running.  You will also need to have
+location data pre-loaded.
+
+You will also need to install the prequisites before you can run the server:
+
+```
+pip install bottle requests numpy scipy sklearn pymongo
+```
+
 ## API
 
 ### `GET /status` 
@@ -23,6 +34,46 @@ optional arguments:
 ```javascript
 {
   "status": "OK"
+}
+```
+
+### `GET /location/:lid`
+
+- *Description:* Return the recommended locations for this user
+- *Params*:
+  - `lid`: the location id to look up
+- *Returns*: JSON representing the location
+  - `latency`: time it took to process request in ms
+  - `id`: location id
+  - `city`: the name of the city
+  - `name`: the name of the airport
+  - `lat`: the latitude of the location
+  - `long`: the longitude of the location
+  - `posts`: posts taken at this location
+    - 'src': path to image
+    - 'uid': user id of poster
+    - 'name': user name of poster
+    - 'id': id of post
+
+#### Sample Response:
+```javascript
+{
+  "city": "San Jose",
+  "name": "Norman Y Mineta San Jose Intl",
+  "latency": 8.383989334106445,
+  "country": "United States",
+  "posts": [
+    {
+    "src": "https://path.com/to/image.jpg",
+    "uid": "1235678",
+    "name": "john.doe",
+    "id": "823894781909238_2342342"
+    },
+    // etc..
+  ],
+  "long": -121.929022,
+  "lat": 37.3626,
+  "id": "3574"
 }
 ```
 
@@ -42,26 +93,40 @@ optional arguments:
 #### Sample Response:
 ```javascript
 {
-  "latency": 259.95802879333496,
-  "uid": "2229281274",
+  "latency": 1155.8010578155518,
+  "id": "17550552",
   "locations": [
-  {
-    "score": 0.1538461538461539,
-    "name": "GAO"
-  },
-  {
-    "score": 0.09890109890109892,
-    "name": "REDSTONE"
-  },
-  {
-    "score": 0.09890109890109892,
-    "name": "MECHERIA"
-  },
-  {
-    "score": 0.08791208791208795,
-    "name": "CANTON ISLAND"
-  }
-  // etc...
+    {
+      "score": 0.19999999999999998,
+      "posts": [
+        {
+        "src": "https://path.com/to/image.jpg",
+        "uid": "1235678",
+        "name": "john.doe",
+        "id": "823894781909238_2342342"
+        },
+        // etc..
+      ],
+      "id": 3574,
+      "name": "San Jose"
+    },
+    // etc...
   ]
 }
+```
+
+Trainer
+===
+
+```
+usage: trainer.py [-h] --cfg CFG --output OUTPUT [--clean] models [models ...]
+
+positional arguments:
+  models           type of model to train
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --cfg CFG        path to config
+  --output OUTPUT  path to model output directory
+  --clean          clean dataset file
 ```
