@@ -45,4 +45,4 @@ def user_tfidf(df, loc_only = False, **kwargs):
 
   extractor = TextFeatureExtractor(tfidf_user)
 
-  return (X_bow, Y_loc, extractor)
+  return (X_bow, y_loc, extractor)
