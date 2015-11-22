@@ -120,6 +120,6 @@ if __name__ == '__main__':
 
   port = args.port if args.port is not None else config.getint('server', 'port')
   print >> sys.stderr, "[server] Starting server at port %d" % port
-  run(host='localhost', port=port)
+  run(host='0.0.0.0', port=port)
 
 
