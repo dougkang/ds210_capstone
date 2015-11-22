@@ -2,6 +2,8 @@ import json
 import os
 import sys
 import requests
+import time
+import numpy as np
 from instagram.client import InstagramAPI
 from instagram.bind import InstagramAPIError, InstagramClientError
 
@@ -42,7 +44,7 @@ class TextFeatureExtractor(FeatureExtractor):
   of the captions
   '''
 
-  def __init__(self, tfidf):
+  def __init__(self, tfidf, **kwargs):
     self._tfidf = tfidf
 
   def transform(self, uid, media_feed):
@@ -59,29 +61,50 @@ class TextFeatureExtractor(FeatureExtractor):
 
 class ImageFeatureExtractor(FeatureExtractor):
   '''
-  Given a url to the iamge model server and a media feed, extract image features
+  Given a url to the image model server and a media feed, extract image features
   and their confidences 
   '''
 
-  def __init__(self, vocab, url="http://119.81.249.157:3000/resources/1"):
+  def __init__(self, vocab, \
+      url="http://119.81.249.157:3000/resources/1",
+      batch_size = 100, qps = 1, **kwargs):
+
+    '''
+    - vocab: dictionary where key is the name and value is the index
+    - url: the endpoint to hit when retrieving image resources
+    '''
     self.url = url
-    self._vocab
+    self._vocab = vocab
+    self._batch_size = int(batch_size)
+    self._qps = int(qps)
+  
+  def _transform(self, urls):
+    res = np.zeros((len(urls), len(self._vocab)))
+
+    for i in range(0, len(urls), self._batch_size):
+      print >> sys.stderr, "[imgfeat] batch: %d" % i
+      data = {}
+      for mid,url in urls[i:i+self._batch_size]:
+          data[mid] = url
+      print >> sys.stderr, "[imgfeat] images length: %d" % len(data)
+      print >> sys.stderr, "[imgfeat] hitting image server %s" % self.url
+      r = requests.post(self.url, json=data)
+      print >> sys.stderr, "[imgfeat] response: %d %s" % (r.status_code, r.text[:100])
+      # Raises exception if NOT OK
+      r.raise_for_status()
+      for j,x in enumerate(r.json().itervalues()):
+        idx = [ self._vocab[y['id']] for y in x ]
+        vs = [ y['score'] for y in x ]
+        res[i+j, idx] = vs
+      time.sleep(self._qps)
+
+    return res
 
   def transform(self, uid, media_feed):
     print >> sys.stderr, "[%s] extracting posts" % uid
     print >> sys.stderr, "[%s] transforming posts into image features" % uid
-    data = {}
+    urls = []
     for m in media_feed:
       if hasattr(m.images, 'standard_resolution'):
-        data[m.id] = m.images['standard_resolution'].url
-    print >> sys.stderr, "[%s] images length: %d" % (uid, len(data))
-    print >> sys.stderr, "[%s] hitting image server %s" % (uid, self.url)
-    r = requests.post(self.url, json=data)
-    print >> sys.stderr, "[%s] response: %d " % (uid, r.status_code, r.text[:100])
-    # Raises exception if NOT OK
-    # TODO when image server is up and running again, uncomment this code
-    # r.raise_for_status()
-    # TODO retrieve ids, coerce into a matrix where id = voca
-    # run them through tfidf
-    # return r.json()
-    raise Exception("Not implemented")
+        urls.append((m.id, m.images['standard_resolution'].url))
+    return self._transform(self, urls) 
