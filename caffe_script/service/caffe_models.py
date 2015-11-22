@@ -15,21 +15,35 @@ import sys
 class Caffe_Models():
     
     def __init__(self, model_name):
-        if model_name=='baseline':
-            self.model_long_name = 'Baseline-CaffeNet'            
-            self.model_path ='models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'
-            self.model_labels = 'data/ilsvrc12/synset_words.txt'
-            self.model_deploy='models/bvlc_reference_caffenet/deploy.prototxt'
-        elif model_name=='style':
-            self.model_long_name = 'Style-Flickr'            
+        if model_name=='style_flickr':
             self.model_path = 'models/finetune_flickr_style/finetune_flickr_style.caffemodel'
             self.model_labels = 'examples/finetune_flickr_style/style_names.txt'
             self.model_deploy='models/finetune_flickr_style/deploy.prototxt'
-        elif model_name=='place':
-            self.model_long_name = 'Places-CNN'            
-            self.model_path = 'models/placesCNN/places205CNN_iter_300000.caffemodel'
+            self.model_mean='python/caffe/imagenet/ilsvrc_2012_mean.npy'
+            self.x_size=227
+            self.y_size=227
+        elif model_name=='place_lenet':
+            self.model_path = 'models/googlenet_places205/googlelet_places205_train_iter_2400000.caffemodel'
             self.model_labels = 'models/placesCNN/categoryIndex_places205.csv'
-            self.model_deploy='models/placesCNN/places205CNN_deploy.prototxt'
+            self.model_deploy='models/googlenet_places205/deploy_places205.protxt'
+            self.model_mean='python/caffe/imagenet/ilsvrc_2012_mean.npy'
+            self.x_size=224
+            self.y_size=224
+        elif model_name=='object_lenet': 
+            self.model_path = 'models/bvlc_googlenet/bvlc_googlenet.caffemodel'
+            self.model_labels = 'data/ilsvrc12/synset_words.txt'
+            self.model_deploy='models/bvlc_googlenet/deploy.prototxt'
+            self.model_mean='python/caffe/imagenet/ilsvrc_2012_mean.npy'
+            self.x_size=224
+            self.y_size=224
+#         elif model_name=='object_imagenet':
+#             self.model_path ='models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'
+#             self.model_labels = 'data/ilsvrc12/synset_words.txt'
+#             self.model_deploy='models/bvlc_reference_caffenet/deploy.prototxt'
+#         elif model_name=='place_cnn':
+#             self.model_path = 'models/placesCNN/places205CNN_iter_300000.caffemodel'
+#             self.model_labels = 'models/placesCNN/categoryIndex_places205.csv'
+#             self.model_deploy='models/placesCNN/places205CNN_deploy.prototxt'
               
         self.index=0
         self.limit=999
@@ -98,15 +112,15 @@ class Caffe_Models():
         plt.rcParams['image.interpolation'] = 'nearest'
         plt.rcParams['image.cmap'] = 'gray'
 
-        ##CHANGE
-        if not os.path.isfile(self.caffe_root + self.model_path):
-#         if not os.path.isfile(self.caffe_root + 'models/finetune_flickr_style/finetune_flickr_style.caffemodel'):
-#         if not os.path.isfile(self.caffe_root + 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'):
-            print("Downloading pre-trained "+self.model_long_name+" model...")   
-#             print("Downloading pre-trained finetune_flickr_style model...")   
-#             print("Downloading pre-trained CaffeNet model...")       
-            #QUESTIONS... DIDN"T CHANGE!!!
-            os.system(self.caffe_root+"scripts/download_model_binary.py caffe/models/bvlc_reference_caffenet")
+#         ##No need to download as Roselind already downloaded the file
+#         if not os.path.isfile(self.caffe_root + self.model_path):
+# #         if not os.path.isfile(self.caffe_root + 'models/finetune_flickr_style/finetune_flickr_style.caffemodel'):
+# #         if not os.path.isfile(self.caffe_root + 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'):
+#             print("Downloading pre-trained "+self.model_long_name+" model...")   
+# #             print("Downloading pre-trained finetune_flickr_style model...")   
+# #             print("Downloading pre-trained CaffeNet model...")       
+#             #QUESTIONS... DIDN"T CHANGE!!!
+#             os.system(self.caffe_root+"scripts/download_model_binary.py caffe/models/bvlc_reference_caffenet")
         
     #Make image predictions
     def caffe_predict(self):
@@ -129,12 +143,12 @@ class Caffe_Models():
         transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
         transformer.set_transpose('data', (2,0,1))
         ## QUESTION
-        transformer.set_mean('data', np.load(self.caffe_root + 'python/caffe/imagenet/ilsvrc_2012_mean.npy').mean(1).mean(1)) # mean pixel
+        transformer.set_mean('data', np.load(self.caffe_root + self.model_mean).mean(1).mean(1)) # mean pixel
         transformer.set_raw_scale('data', 255)  # the reference model operates on images in [0,255] range instead of [0,1]
         transformer.set_channel_swap('data', (2,1,0))  # the reference model has channels in BGR order instead of RGB
 
         # set net to batch size to be the total number of images
-        net.blobs['data'].reshape(self.num_images,3,227,227)
+        net.blobs['data'].reshape(self.num_images,3,self.x_size,self.y_size)
 
         
         # load labels
