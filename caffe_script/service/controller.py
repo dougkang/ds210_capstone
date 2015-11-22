@@ -13,11 +13,11 @@ class Controller:
 
     def POST(self, resource_id=None):
         if resource_id=="1":
-            return self.baseline()
+            return self.style_flickr()
         elif resource_id=="2":
-            return self.style()
+            return self.object_lenet()
         elif resource_id=="3":
-            return self.place()
+            return self.place_lenet()
         else:
             raise web.badrequest()
 

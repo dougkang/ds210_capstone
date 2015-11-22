@@ -12,35 +12,40 @@ class ResourceController(Controller):
 
     def list(self):
         return "list resources", format
-
-    def baseline(self):
-        request = json.loads(web.data())
-        cm = Caffe_Models('baseline')
-        return cm.caffe_models_run(request) #response
     
-    def style(self):
+    #MODELS THAT WE USE    
+    def style_flickr(self):
         request = json.loads(web.data())
-        cm = Caffe_Models('style')
+        cm = Caffe_Models('style_flickr')
         return cm.caffe_models_run(request) #response
 
-    def place(self):
+    def object_lenet(self):
         request = json.loads(web.data())
-        cm = Caffe_Models('place')
+        cm = Caffe_Models('object_lenet')
+        return cm.caffe_models_run(request) #response
+    
+    def place_lenet(self):
+        request = json.loads(web.data())
+        cm = Caffe_Models('place_lenet')
         return cm.caffe_models_run(request) #response
     
     
-#     def baseline(self):
-#         request = json.loads(web.data())
-#         b = Baseline()
-#         respond = b.baseline_run(request)
-#         return respond
-        
-#     def style(self):
-#         request = json.loads(web.data())
-#         b = Style()
-#         respond = b.style_run(request)
-#         return respond
-        
+    #MODELS THAT WE ARE NOT USING
+
+    ## this is the baseline
+    def object_imagenet(self):
+        request = json.loads(web.data())
+        cm = Caffe_Models('object_imagenet')
+        return cm.caffe_models_run(request) #response
+
+    def place_cnn(self):
+        request = json.loads(web.data())
+        cm = Caffe_Models('place_cnn')
+        return cm.caffe_models_run(request) #response
+
+    
+    
+    
 ## ORIGINAL RESTFUL CONTROLLER
 #     def get(self, resource_id):
 #         return "retrieved resource", resource_id
