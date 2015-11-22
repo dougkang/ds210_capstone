@@ -71,6 +71,7 @@ if __name__ == '__main__':
   client = MongoClient(host, port)
   location_collection = client[db][config.get('server', 'location_collection')]
 
+  # Initialize models
   models = []
   weights = []
 
@@ -85,13 +86,14 @@ if __name__ == '__main__':
   print >> sys.stderr, "[server] found %d models" % len(models)
   print >> sys.stderr, "[server] found %d weights" % len(weights)
 
+  server = Server(models, weights)
+
+  # Enable CORS
   @app.hook('after_request')
   def enable_cors():
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = 'PUT, GET, POST, DELETE, OPTIONS'
     response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
-  server = Server(models, weights)
-
   @route('/')
   def index():
     print >> sys.stderr, "[server] status request"
