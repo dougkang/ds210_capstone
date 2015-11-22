@@ -4,7 +4,6 @@ import sys
 import pickle
 import time
 from pymongo import MongoClient
-from bottle import route, run, request
 
 class InstaModel(object):
   '''
@@ -51,6 +50,9 @@ class Server(object):
 
 if __name__ == '__main__':
 
+  from bottle import Bottle, request, response, run, route
+  app = Bottle()
+
   # Extract config information from args and supplied config
   parser = argparse.ArgumentParser()
   parser.add_argument('--cfg', type=str, required=True, help="path to config")
@@ -83,6 +85,11 @@ if __name__ == '__main__':
   print >> sys.stderr, "[server] found %d models" % len(models)
   print >> sys.stderr, "[server] found %d weights" % len(weights)
 
+  @app.hook('after_request')
+  def enable_cors():
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'PUT, GET, POST, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
   server = Server(models, weights)
 
   @route('/')
@@ -121,5 +128,3 @@ if __name__ == '__main__':
   port = args.port if args.port is not None else config.getint('server', 'port')
   print >> sys.stderr, "[server] Starting server at port %d" % port
   run(host='localhost', port=port)
-
-
