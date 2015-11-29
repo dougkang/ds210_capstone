@@ -96,7 +96,7 @@ class ImageFeatureExtractor(FeatureExtractor):
         idx = [ self._vocab[y['id']] for y in x ]
         vs = [ y['score'] for y in x ]
         res[i+j, idx] = vs
-      time.sleep(self._qps)
+      time.sleep(1.0 / self._qps)
 
     return res
 

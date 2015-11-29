@@ -4,15 +4,15 @@ import math
 import pickle
 import pandas as pd
 import numpy as np
-from load_data import load, assign_airport
+import load_data
 from server import InstaModel
 
 def load(dataset_path, force_refresh = False, **kwargs):
   if force_refresh or not os.path.isfile(dataset_path):
     print "[trainer] loading data from scratch"
-    df = load(**kwargs)
+    df = load_data.load(**kwargs)
     print "[trainer] assigning airport"
-    df = assign_airport(df, **kwargs)
+    df = load_data.assign_airport(df, **kwargs)
     print "[trainer] saving dataset to %s" % dataset_path
     df.to_csv(dataset_path, encoding='utf-8')
   else:
@@ -86,7 +86,7 @@ if __name__ == "__main__":
       trainer = Trainer(train_tfidf.post_tfidf, train_pmodel.post_nb)
     elif m == 'text_userknn':
       trainer = Trainer(train_tfidf.user_tfidf, train_lmodel.post_knn)
-    elif m == 'image_knn':
+    elif m == 'style_knn' or m == 'object_knn' or m == 'place_knn':
       trainer = Trainer(train_img.post_img, train_pmodel.post_knn)
     else:
       raise ValueError("Unrecognized model %s" % m)
