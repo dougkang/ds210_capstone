@@ -82,7 +82,7 @@ class ImageFeatureExtractor(FeatureExtractor):
     res = np.zeros((len(urls), len(self._vocab)))
 
     for i in range(0, len(urls), self._batch_size):
-      print >> sys.stderr, "[imgfeat] batch: %d" % i
+      print >> sys.stderr, "[imgfeat] batch: %d/%d" % (i, len(urls))
       data = {}
       for mid,url in urls[i:i+self._batch_size]:
           data[mid] = url
