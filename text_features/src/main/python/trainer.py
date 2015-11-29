@@ -23,6 +23,9 @@ def load(dataset_path, force_refresh = False, **kwargs):
   return df
 
 class Trainer(object):
+  '''
+  Responsible for training an InstaModel
+  '''
 
   def __init__(self, train_extractor, train_recmodel):
     self._train_extractor = train_extractor
@@ -44,7 +47,20 @@ class Trainer(object):
 
     return (m, metrics)
 
-  def run(self, im_path, dataset_path, force_refresh = False, df_test = None, **kwargs):
+  def run(self, im_path, dataset_path, \
+      force_refresh = False, df_test = None, **kwargs):
+    '''
+    Run the trainer to train an Instamodel
+
+    Args:
+      im_path: the path where we plan to save our instamodel.
+      dataset_path: the path from which to load a previously cached dataset.  If None, run will
+        try to load the dataset from scratch and save to this location
+      force_refresh: whether or not we want to force the refresh of a cached dataset
+    Returns:
+      a tuple containing the instamodel and some metrics we have calculated
+    '''
+
     df = load(dataset_path, force_refresh, **kwargs)
     return self._run(df, im_path, df_test, **kwargs)
 
