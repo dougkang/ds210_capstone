@@ -11,7 +11,7 @@ def post_img(df, vocab_path, url="http://119.81.249.157:3000/resources/1", **kwa
   # We are only interested in stuff with locations
 
   with open(vocab_path) as f_vocab:
-    vocab = dict([ (x[1], x[0]) for x in enumerate(f_vocab.readlines()) ])
+    vocab = dict([ (x[1].strip(), x[0]) for x in enumerate(f_vocab.readlines()) ])
 
   extractor = ImageFeatureExtractor(vocab, url, **kwargs)
   df_img = df.loc[pd.notnull(df['airport'])]
