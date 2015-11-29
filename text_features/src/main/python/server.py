@@ -16,37 +16,37 @@ class InstaModel(object):
     self.rm = rm
 
   def predict(self, uid, access):
-    print >> sys.stderr, "[%s] predicting cluster" % uid
+    print >> sys.stderr, "[%s] predicting location" % uid
     Y_feat = self.extractor.transform_uid(uid, access)
     print >> sys.stderr, "[%s] features: %s" % (uid, str(Y_feat.shape))
+
     Y_loc = self.rm.predict(uid, Y_feat)
     print >> sys.stderr, "[%s] %d locations found" % (uid, len(Y_loc))
-
     total = sum(Y_loc.values())
-    res = dict([(k, float(v) / total) for k,v in Y_loc.items() ])
+    res_loc = dict([(k, float(v) / total) for k,v in Y_loc.items() ])
 
-    return res
+    return res_loc
 
 class Server(object):
 
   def __init__(self, models, weights):
     self._mw = zip(models, weights)
 
-
   def predict(self, uid, access):
     # TODO it might be better to extract media feed here
-    Y = {}
+    res_loc = {}
     for m,w in self._mw:
       Y_loc = m.predict(uid, access)
       for k,v in Y_loc.items():
-        if k not in Y:
-          Y[k] = 0
-        Y[k] = Y[k] + v*w
+        if k not in res_loc:
+          res_loc[k] = 0
+        res_loc[k] = res_loc[k] + v*w
 
-    total = sum(Y.values())
-    res = [ (k, (float(v) / total)) for k,v in Y.items() ]
+    total = sum(res_loc.values())
+    res_loc = [ (k, (float(v) / total)) for k,v in res_loc.items() ]
+    res_loc = sorted(res_loc, key=lambda x: x[1], reverse = True)
 
-    return sorted(res, key=lambda x: x[1], reverse = True)
+    return res_loc
 
 if __name__ == '__main__':
 
@@ -61,7 +61,10 @@ if __name__ == '__main__':
 
   config = ConfigParser.ConfigParser()
   config.read(args.cfg)
-  print config
+  print str(config)
+
+  max_user_posts = config.getint('server', 'max_user_posts')
+  max_location_posts = config.getint('server', 'max_location_posts')
 
   # Connect to mongo
   host = config.get('mongo', 'host')
@@ -70,6 +73,7 @@ if __name__ == '__main__':
   print >> sys.stderr, "[server] Connecting to %s:%d/%s" % (host, port, db)
   client = MongoClient(host, port)
   location_collection = client[db][config.get('server', 'location_collection')]
+  media_feed_collection = client[db][config.get('server', 'media_feed_collection')]
 
   # Initialize models
   models = []
@@ -108,6 +112,15 @@ if __name__ == '__main__':
     del res['_id']
     return res
 
+  @route('/user/<uid>')
+  def user(uid):
+    now = time.time()
+    res = media_feed_collection.find_one({ "_id": int(uid) })
+    res['id'] = uid
+    res['latency'] = (time.time() - now) * 1000
+    del res['_id']
+    return res
+
   @route('/predict/<access>/<uid>')
   def predict(uid, access):
     now = time.time()
@@ -116,16 +129,47 @@ if __name__ == '__main__':
       th = float(request.query['th'])
 
     print >> sys.stderr, "[server] predict request: %s, th=%d" % (uid, th)
-    res = filter(lambda x: x[1] > th, server.predict(uid, access))
+    res_loc = filter(lambda x: x[1] > th, server.predict(uid, access))
     # Augment our result with the location information
-    res = map(lambda x: (x[0], x[1], location_collection.find_one({ "_id": int(x[0]) })), res)
-    print res
-      
+    res_loc = map(lambda x: (x[0], x[1], location_collection.find_one(
+      { "_id": int(x[0]) }, { 'posts': { '$slice': max_location_posts } })), res_loc)
+
+    top_users = {}
+    for k,s,v in res_loc:
+      for p in v['posts']:
+        uid = p['uid']
+        if uid not in top_users:
+          top_users[uid] = 0
+        top_users[uid] = top_users[uid] + s
+    # TODO hardcoded to 10 top occuring users here
+    top_users = sorted(top_users.items(), 
+        key=lambda x: x[1], reverse=True)[:10]
+
+    res_usr = []
+    for uid,score in top_users:
+      x = media_feed_collection.find_one(
+          { "_id": uid }, { 'feed': { '$slice': max_user_posts } })
+      res_usr.append((uid, score, x))
+    res_usr = filter(lambda x: x[2] is not None, res_usr)
+
     return { 
       'id': uid,
       'latency': (time.time() - now) * 1000,
+      'users': [
+        { 'id': k, 
+          'name': v['uname'] if 'uname' in v else 'instagram_user', 
+          'score': s, 
+          'posts': [ { 
+            'id': x['id'],
+            'src': x['images']['standard_resolution']
+            } for x in v['feed'] ]
+          } for k,s,v in res_usr ],
       'locations': [ 
-        { 'id': k, 'name': v['city'], 'score': s, 'posts': v['posts'] } for k,s,v in res ] }
+        { 'id': k, 
+          'name': v['city'], 
+          'score': s, 
+          'posts': v['posts'] 
+          } for k,s,v in res_loc ] }
 
   port = args.port if args.port is not None else config.getint('server', 'port')
   print >> sys.stderr, "[server] Starting server at port %d" % port

@@ -16,7 +16,7 @@ class RecModel(object):
   def predict(self, uid, x):
     print >> sys.stderr, "[%s] predicting locations" % (uid)
     Y = self._predict(x)
-    print >> sys.stderr, "[%s] prediction %d locations" % (uid, len(Y))
+    print >> sys.stderr, "[%s] predicted %d locations" % (uid, len(Y))
     return Y
 
 class LModel(RecModel):
@@ -42,7 +42,7 @@ class LModel(RecModel):
 
   def _predict(self, X):
     res = {}
-
+    
     # A couple of our models in this group use kneighbors instead of predict
     # If such a function exists, use it, otherwise, stick to predict
     predict = lambda x: self._m.predict(x)

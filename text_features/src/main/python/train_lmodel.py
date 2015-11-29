@@ -14,7 +14,7 @@ def post_knn(X, y, k = 10, path = "models/userknn_pm.pickle",
   m = NearestNeighbors(k, **kwargs)
   m.fit(X)
  
-  print >> sys.stderr, "[post_knn] saving locations to %s:%s/%s/%s" % (host, port, db, knn_collection)
+  print >> sys.stderr, "[user_knn] saving locations to %s:%s/%s/%s" % (host, port, db, knn_collection)
   mongo = MongoClient(host, port = int(port))[db][knn_collection]
   for i,locs in enumerate(y):
     data = {}
