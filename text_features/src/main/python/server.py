@@ -143,7 +143,7 @@ if __name__ == '__main__':
         top_users[uid] = top_users[uid] + s
     # TODO hardcoded to 10 top occuring users here
     top_users = sorted(top_users.items(), 
-        key=lambda x: x[1], reverse=True)[:10]
+        key=lambda x: x[1], reverse=True)[:25]
 
     res_usr = []
     for uid,score in top_users:
