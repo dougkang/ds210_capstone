@@ -93,11 +93,11 @@ class Caffe_Models():
                 except IOError:
                     print "Cannot open image: remove image and go to next line of JSON"
                     os.remove(image_path)
-                    self.images[feed_id]="NA"
+                    self.images.pop(feed_id, None)
 
             except IndexError:
                 print "Index error with line of JSON: ignore and go to next line of JSON"
-                self.images[feed_id]="NA"
+	        self.images.pop(feed_id, None)
 
                 
                 
@@ -197,4 +197,4 @@ class Caffe_Models():
                 self.predictions.setdefault(feed_id, [])
                 pred_id = top_prediction[:9]
                 pred_name = top_prediction[11:]
-                self.predictions[feed_id].append({"id":pred_id,"name":pred_name,"score":top_prob}) 
+                self.predictions[feed_id].append({"id":pred_id,"name":pred_name,"score":float(top_prob)}) 

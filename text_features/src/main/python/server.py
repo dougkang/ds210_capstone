@@ -29,13 +29,17 @@ class InstaModel(object):
 
 class Server(object):
 
-  def __init__(self, models, weights):
-    self._mw = zip(models, weights)
+  def __init__(self, names, models, weights):
+    self._mw = dict(zip(names, zip(models, weights)))
+
+  def model(self, name):
+    return self._mw[name]
 
   def predict(self, uid, access):
     # TODO it might be better to extract media feed here
     res_loc = {}
-    for m,w in self._mw:
+    for n,(m,w) in self._mw.items():
+      print >> sys.stderr, "[%s] invoking model %s, w=%d" % (uid, n, w)
       Y_loc = m.predict(uid, access)
       for k,v in Y_loc.items():
         if k not in res_loc:
@@ -141,9 +145,9 @@ if __name__ == '__main__':
         if uid not in top_users:
           top_users[uid] = 0
         top_users[uid] = top_users[uid] + s
-    # TODO hardcoded to 10 top occuring users here
+    # TODO hardcoded to 25 top occuring users here
     top_users = sorted(top_users.items(), 
-        key=lambda x: x[1], reverse=True)[:10]
+        key=lambda x: x[1], reverse=True)[:25]
 
     res_usr = []
     for uid,score in top_users:
