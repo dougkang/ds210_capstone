@@ -66,7 +66,7 @@ class ImageFeatureExtractor(FeatureExtractor):
   '''
 
   def __init__(self, vocab, \
-      url="http://119.81.249.157:3000/resources/1",
+      url = "http://119.81.249.157:3000/resources/1",
       batch_size = 100, qps = 1, **kwargs):
 
     '''
@@ -78,33 +78,46 @@ class ImageFeatureExtractor(FeatureExtractor):
     self._batch_size = int(batch_size)
     self._qps = int(qps)
   
-  def _transform(self, urls):
+  def _transform(self, urls, cache = None):
     res = np.zeros((len(urls), len(self._vocab)))
 
-    for i in range(0, len(urls), self._batch_size):
-      print >> sys.stderr, "[imgfeat] batch: %d/%d" % (i, len(urls))
-      data = {}
-      for mid,url in urls[i:i+self._batch_size]:
-          data[mid] = url
-      print >> sys.stderr, "[imgfeat] images length: %d" % len(data)
-      print >> sys.stderr, "[imgfeat] hitting image server %s" % self.url
-      r = requests.post(self.url, json=data)
-      print >> sys.stderr, "[imgfeat] response: %d %s" % (r.status_code, r.text[:100])
-      # Raises exception if NOT OK
-      r.raise_for_status()
-      for j,x in enumerate(r.json().itervalues()):
-        idx = [ self._vocab[y['id']] for y in x ]
-        vs = [ y['score'] for y in x ]
-        res[i+j, idx] = vs
-      time.sleep(1.0 / self._qps)
+    data = {}
+    curr = 0
+    for mid,url in urls:
+      doc = cache.find_one({ "_id": mid }) \
+          if cache is not None else None
+
+      if doc is not None:
+        print >> sys.stderr, "[imgfeat] cached hit: %s: %s" % (self.url, doc)
+        idx = [ self._vocab[x['id']] for x in doc['result'] ]
+        vs = [ x['score'] for x in doc['result'] ]
+        res[curr, idx] = vs
+        curr = curr + 1
+      else:
+        data[mid] = url
+        if len(data) % self._batch_size == 0:
+          print >> sys.stderr, "[imgfeat] %d/%d" % (curr,len(urls))
+          print >> sys.stderr, "[imgfeat] batch threshold reached, hitting image server %s" % self.url
+          r = requests.post(self.url, json=data)
+          print >> sys.stderr, "[imgfeat] response: %d %s" % (r.status_code, r.text[:100])
+          # Raises exception if NOT OK
+          r.raise_for_status()
+          for k,v in r.json().iteritems():
+            idx = [ self._vocab[x['id']] for x in v ]
+            vs = [ x['score'] for x in v ]
+            res[curr, idx] = vs
+            cache.update_one({ '_id': k }, { '$set': { "result": v } }, upsert = True)
+            curr = curr + 1
+          data = {}
+          time.sleep(1.0 / self._qps)
 
     return res
 
-  def transform(self, uid, media_feed):
+  def transform(self, uid, media_feed, cache = None):
     print >> sys.stderr, "[%s] extracting posts" % uid
     print >> sys.stderr, "[%s] transforming posts into image features" % uid
     urls = []
     for m in media_feed:
       if hasattr(m.images, 'standard_resolution'):
         urls.append((m.id, m.images['standard_resolution'].url))
-    return self._transform(self, urls) 
+    return self._transform(self, urls, cache) 
