@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import load_data
 from server import InstaModel
+from pymongo import MongoClient
 
 def load(dataset_path, force_refresh = False, **kwargs):
   if force_refresh or not os.path.isfile(dataset_path):
@@ -27,14 +28,16 @@ class Trainer(object):
   Responsible for training an InstaModel
   '''
 
-  def __init__(self, train_extractor, train_recmodel):
+  def __init__(self, train_extractor, train_recmodel, cache = None):
     self._train_extractor = train_extractor
     self._train_recmodel = train_recmodel
+    self._cache = cache
 
   def _run(self, df, im_path, df_test = None, **kwargs):
-    X, y, ex = self._train_extractor(df, **kwargs)
+    X, y, ex = self._train_extractor(df, cache = self._cache, **kwargs)
     X_test = None
     y_test = None
+    # FIXME this is heavily tied to text extractor
     if df_test is not None:
       X_test = ex._tfidf.transform(df_test['bow'])
       y_test = df_test['airport']
@@ -103,7 +106,14 @@ if __name__ == "__main__":
     elif m == 'text_userknn':
       trainer = Trainer(train_tfidf.user_tfidf, train_lmodel.post_knn)
     elif m == 'style_knn' or m == 'object_knn' or m == 'place_knn':
-      trainer = Trainer(train_img.post_img, train_pmodel.post_knn)
+      host = config.get('mongo', 'host')
+      port = config.getint('mongo', 'port')
+      db = config.get('mongo', 'db')
+      print >> sys.stderr, "[trainer] Connecting to %s:%d/%s" % \
+         (host, port, db)
+      client = MongoClient(host, port)
+      cache = client[db][config.get(m, 'cache_collection')]
+      trainer = Trainer(train_img.post_img, train_pmodel.post_knn, cache)
     else:
       raise ValueError("Unrecognized model %s" % m)
 
