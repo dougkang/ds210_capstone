@@ -81,7 +81,6 @@ class ImageFeatureExtractor(FeatureExtractor):
   def _transform(self, urls, cache = None):
     res = np.zeros((len(urls), len(self._vocab)))
 
-<<<<<<< Updated upstream
     data = {}
     curr = 0
     for mid,url in urls:
