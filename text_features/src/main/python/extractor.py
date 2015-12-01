@@ -100,7 +100,7 @@ class ImageFeatureExtractor(FeatureExtractor):
           print >> sys.stderr, "[imgfeat] %d/%d" % (curr,len(urls))
           print >> sys.stderr, "[imgfeat] batch threshold reached, hitting image server %s" % self.url
           r = requests.post(self.url, json=data)
-          print >> sys.stderr, "[imgfeat] response: %d %s" % (r.status_code, r.text[:100])
+          print >> sys.stderr, "[imgfeat] response: %d %s" % (r.status_code, r.text[:150])
           # Raises exception if NOT OK
           r.raise_for_status()
           for k,v in r.json().iteritems():
@@ -111,24 +111,6 @@ class ImageFeatureExtractor(FeatureExtractor):
             curr = curr + 1
           data = {}
           time.sleep(1.0 / self._qps)
-=======
-    for i in range(0, len(urls), self._batch_size):
-      print >> sys.stderr, "[imgfeat] batch: %d/%d" % (i, len(urls))
-      data = {}
-      for mid,url in urls[i:i+self._batch_size]:
-          data[mid] = url
-      print >> sys.stderr, "[imgfeat] images length: %d" % len(data)
-      print >> sys.stderr, "[imgfeat] hitting image server %s" % self.url
-      r = requests.post(self.url, json=data)
-      print >> sys.stderr, "[imgfeat] response: %d %s" % (r.status_code, r.text[:150])
-      # Raises exception if NOT OK
-      r.raise_for_status()
-      for j,x in enumerate(r.json().itervalues()):
-        idx = [ self._vocab[y['id']] for y in x ]
-        vs = [ y['score'] for y in x ]
-        res[i+j, idx] = vs
-      time.sleep(1.0 / self._qps)
->>>>>>> Stashed changes
 
     return res
 
