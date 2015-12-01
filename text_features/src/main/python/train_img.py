@@ -19,11 +19,11 @@ def post_img(df, vocab_path,
   extractor = ImageFeatureExtractor(vocab, url, **kwargs)
   df_img = df.loc[pd.notnull(df['airport'])]
   X = extractor._transform(zip(df_img['mid'], df_img['url']), cache)
-  y_loc = df_bow['airport']
+  y_loc = df_img['airport']
 
   print "Post Image Dataset"
   print X.shape
   print y_loc.shape
-  print df_bow.head()
+  print df_img.head()
 
   return (X, y_loc, extractor)

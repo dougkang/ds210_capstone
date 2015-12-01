@@ -81,6 +81,7 @@ class ImageFeatureExtractor(FeatureExtractor):
   def _transform(self, urls, cache = None):
     res = np.zeros((len(urls), len(self._vocab)))
 
+<<<<<<< Updated upstream
     data = {}
     curr = 0
     for mid,url in urls:
@@ -110,6 +111,24 @@ class ImageFeatureExtractor(FeatureExtractor):
             curr = curr + 1
           data = {}
           time.sleep(1.0 / self._qps)
+=======
+    for i in range(0, len(urls), self._batch_size):
+      print >> sys.stderr, "[imgfeat] batch: %d/%d" % (i, len(urls))
+      data = {}
+      for mid,url in urls[i:i+self._batch_size]:
+          data[mid] = url
+      print >> sys.stderr, "[imgfeat] images length: %d" % len(data)
+      print >> sys.stderr, "[imgfeat] hitting image server %s" % self.url
+      r = requests.post(self.url, json=data)
+      print >> sys.stderr, "[imgfeat] response: %d %s" % (r.status_code, r.text[:150])
+      # Raises exception if NOT OK
+      r.raise_for_status()
+      for j,x in enumerate(r.json().itervalues()):
+        idx = [ self._vocab[y['id']] for y in x ]
+        vs = [ y['score'] for y in x ]
+        res[i+j, idx] = vs
+      time.sleep(1.0 / self._qps)
+>>>>>>> Stashed changes
 
     return res
 
