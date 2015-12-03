@@ -82,11 +82,13 @@ if __name__ == '__main__':
   # Initialize models
   models = []
   weights = []
+  names = []
 
   for model_name in config.get('server', 'models').split(','):
     print >> sys.stderr, "[server] Loading %s model" % model_name
     with open(config.get(model_name, 'pickle')) as f_im:
       im = pickle.load(f_im)
+      names.append(model_name)
       models.append(im)
       weights.append(config.getfloat(model_name, 'weight'))
       print >> sys.stderr, "[server] Loaded %s model" % model_name
@@ -94,7 +96,7 @@ if __name__ == '__main__':
   print >> sys.stderr, "[server] found %d models" % len(models)
   print >> sys.stderr, "[server] found %d weights" % len(weights)
 
-  server = Server(models, weights)
+  server = Server(names, models, weights)
 
   # Enable CORS
   @app.hook('after_request')
