@@ -117,8 +117,15 @@ def assign_airport(
 
   print >> sys.stderr, "[assign_airport] saving posts"
   for i,r in en_df.iterrows():
-    data = { 'id': r['mid'], 'name': r['uname'], 'uid': r['uid'], 'src': r['url'] }
-    mongo.update_one({ '_id': r['airport'] }, { '$push': { "posts": data } })
+    data = { 
+        'id': r['mid'], 'name': r['uname'], 'uid': r['uid'], 
+        'src': r['url'], 'likes': r['likes'] }
+    mongo.update_one({ '_id': r['airport'] }, 
+      { '$push': { 
+        "posts": { 
+          '$each': [ data ],
+          '$sort': { 'likes': -1 },
+          '$slice': -100 } } })
 
   client.close()
 
