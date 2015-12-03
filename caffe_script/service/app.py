@@ -17,17 +17,20 @@ class ResourceController(Controller):
     def style_flickr(self):
         request = json.loads(web.data())
         cm = Caffe_Models('style_flickr')
-        return cm.caffe_models_run(request) #response
+        res = cm.caffe_models_run(request)
+        return json.dumps(res)
 
     def object_lenet(self):
         request = json.loads(web.data())
         cm = Caffe_Models('object_lenet')
-        return cm.caffe_models_run(request) #response
+        res = cm.caffe_models_run(request)
+        return json.dumps(res)
     
     def place_lenet(self):
         request = json.loads(web.data())
         cm = Caffe_Models('place_lenet')
-        return cm.caffe_models_run(request) #response
+        res = cm.caffe_models_run(request)
+        return json.dumps(res)
     
     
     #MODELS THAT WE ARE NOT USING

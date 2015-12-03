@@ -82,7 +82,7 @@ for i,line in enumerate(open(sys.argv[1]).readlines()):
       print >> sys.stderr, "User is private"
       private_count = private_count + 1
     else:
-      print >> sys.stderr, "Error: " + e
+      print >> sys.stderr, "Error: " + str(e)
   except Exception as e:
     print >> sys.stderr, "Error: " + str(e)
     

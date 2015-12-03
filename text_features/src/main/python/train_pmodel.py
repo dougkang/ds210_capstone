@@ -7,6 +7,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.mixture import GMM
 from sklearn.svm import SVC
 from sklearn.naive_bayes import BernoulliNB
+from sklearn.ensemble import RandomForestClassifier
 from cluster import PModel
 
 def post_pmodel(X, y, m, k, path, X_test = None, y_test = None, **kwargs):
@@ -68,7 +69,7 @@ def post_pmodel(X, y, m, k, path, X_test = None, y_test = None, **kwargs):
   return (pm, metrics)
 
 def post_knn(X, y, k = 10, path = "models/knn_pm.pickle", **kwargs):
-  return post_pmodel(X, y, KNeighborsClassifier(int(k), **kwargs), int(k), path, **kwargs)
+  return post_pmodel(X, y, KNeighborsClassifier(int(k)), int(k), path, **kwargs)
 
 def post_gmm(X, y, k = 10, path = "models/gmm_pm.pickle", **kwargs):
   return post_pmodel(X.toarray(), y, GMM(int(k), **kwargs), int(k), path, **kwargs)
@@ -80,4 +81,4 @@ def post_nb(X, y, k = 10, path = "models/nb_pm.pickle", **kwargs):
   return post_pmodel(X, y, BernoulliNB(), int(k), path, **kwargs)
 
 def post_rf(X, y, k = 10, path = "models/rf_pm.pickle", **kwargs):
-  return post_pmodel(X, y, RandomForestClassifier(**kwargs), int(k), path, **kwargs)
+  return post_pmodel(X, y, RandomForestClassifier(n_estimators = 10, criterion = 'gini'), int(k), path, **kwargs)

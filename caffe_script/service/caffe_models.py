@@ -93,11 +93,11 @@ class Caffe_Models():
                 except IOError:
                     print "Cannot open image: remove image and go to next line of JSON"
                     os.remove(image_path)
-                    self.images[feed_id]="NA"
+                    self.images.pop(feed_id, None)
 
             except IndexError:
                 print "Index error with line of JSON: ignore and go to next line of JSON"
-                self.images[feed_id]="NA"
+	        self.images.pop(feed_id, None)
 
                 
                 
@@ -124,6 +124,9 @@ class Caffe_Models():
         
     #Make image predictions
     def caffe_predict(self):
+
+        if len(self.images) == 0:
+           return
         
         # Set Caffe to CPU mode, load the net in the test phase for inference, and configure input preprocessing.
         caffe.set_mode_cpu()
@@ -195,6 +198,7 @@ class Caffe_Models():
 
             for top_prob,top_prediction in zip(top_probs,top_predictions):
                 self.predictions.setdefault(feed_id, [])
-                pred_id = top_prediction[:9]
-                pred_name = top_prediction[11:]
-                self.predictions[feed_id].append({"id":pred_id,"name":pred_name,"score":top_prob}) 
+                toks = top_prediction.split(' ')
+                pred_id = toks[0]
+                pred_name = ' '.join(toks[1:])
+                self.predictions[feed_id].append({"id":pred_id,"name":pred_name,"score":float(top_prob)}) 
