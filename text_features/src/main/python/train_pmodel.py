@@ -68,7 +68,7 @@ def post_pmodel(X, y, m, k, path, X_test = None, y_test = None, **kwargs):
   return (pm, metrics)
 
 def post_knn(X, y, k = 10, path = "models/knn_pm.pickle", **kwargs):
-  return post_pmodel(X, y, KNeighborsClassifier(int(k), **kwargs), int(k), path, **kwargs)
+  return post_pmodel(X, y, KNeighborsClassifier(int(k)), int(k), path, **kwargs)
 
 def post_gmm(X, y, k = 10, path = "models/gmm_pm.pickle", **kwargs):
   return post_pmodel(X.toarray(), y, GMM(int(k), **kwargs), int(k), path, **kwargs)
