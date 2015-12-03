@@ -1,7 +1,7 @@
 // get all the tools we need
 var express  = require('express');
 var app      = express();
-var port     = process.env.PORT || 3000;
+var port     = process.env.PORT || 3000; //CHANGE PORT
 // var mongoose = require('mongoose');
 var passport = require('passport');
 var flash    = require('connect-flash');
@@ -43,7 +43,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new InstagramStrategy({
     clientID: INSTAGRAM_CLIENT_ID,
     clientSecret: INSTAGRAM_CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/auth/instagram/callback",
+    callbackURL: "http://localhost:3000/auth/instagram/callback", //CHANGE IP-PORT
     passReqToCallback: true
   },
   // function(accessToken, refreshToken, profile, done) {
@@ -90,9 +90,6 @@ app.get('/', function(req, res){
     // console.log(req);
     res.render('index', { user: req.user });
 
-
- 
-
   // });
 });
 
@@ -116,6 +113,9 @@ app.get('/main', ensureAuthenticated, function(req, res){
   })
 });
 
+/// API:    /main/user => 
+
+//instaplace.co/main/19283741
 
 
 // GET /auth/instagram
@@ -157,7 +157,6 @@ app.get('/logout', function(req, res){
 });
 
 app.listen(port);
-
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If

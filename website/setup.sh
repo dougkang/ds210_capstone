@@ -13,7 +13,7 @@ sudo apt-get install git
 # pull repo from Github and placed core website code into opt folder
 git clone https://github.com/dougkang/ds210_capstone
 sudo mkdir -p /opt/app/website
-sudo cp -r ~/w209_d3_fun/website/web4 /opt/app/website/public
+sudo cp -r ~/ds210_capstone/website/web_ejs /opt/app/website/public
 # fix issue with vim editor
 cat <<EOF >> ~/.vimrc
 :set nocompatible
@@ -23,6 +23,9 @@ EOF
 cd /opt/app/website/public
 sudo npm install --save
 sudo npm install -g nodemon
+
+sudo rm /usr/bin/node
+sudo ln -s /usr/bin/nodejs /usr/bin/node
 # # configure node to run 24x7 even when instance die
 # sudo cp ~/w209_d3_fun/Admin/node-app.conf /etc/init/
 # sudo cat <<EOF >> /etc/init/node-app.conf
