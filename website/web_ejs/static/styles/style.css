@@ -71,8 +71,19 @@
   margin: 0px auto
 }
 
-#city-name{
+.city-name{
   margin-top: 50px; 
+  text-align: center;
+  font-size: 25px;
+}
+
+.instagrammer-name{
+  margin-top: 30px; 
+  text-align: center;
+  font-size: 20px;
+}
+
+.score{
   text-align: center;
 }
 
@@ -111,7 +122,14 @@
   display: inline-block;
 }
 
+.description {
+  line-height: 150%;
+}
 
+.sub-header{
+  text-decoration: underline;
+  margin-left: 25px;
+}
 
 /* OLD REFERENCES */
 /*
