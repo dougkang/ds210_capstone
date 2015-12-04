@@ -36,7 +36,7 @@ class FeatureExtractor(object):
       more, mf_next_ = api.user_recent_media(with_next_url=mf_next_)
     print >> sys.stderr, "[%s] found %d posts" % (uid, len(media_feed))
 
-    return self.transform(uid, media_feed, cache)
+    return (media_feed, self.transform(uid, media_feed, cache))
 
 class TextFeatureExtractor(FeatureExtractor):
   '''
@@ -102,7 +102,7 @@ class ImageFeatureExtractor(FeatureExtractor):
       else:
         data[mid] = url
         if len(data) % self._batch_size == 0:
-	  print >> sys.stderr, "[imgfeat] %d/%d" % (curr,len(urls))
+          print >> sys.stderr, "[imgfeat] %d/%d" % (curr,len(urls))
           print >> sys.stderr, "[imgfeat] batch threshold reached, hitting image server %s" % self.url
           for k,v in self._send_request(data).iteritems():
             idx = [ self._vocab[x['id'].lower()] for x in v ]
