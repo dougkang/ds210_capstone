@@ -17,7 +17,7 @@ class InstaModel(object):
 
   def predict(self, uid, access):
     print >> sys.stderr, "[%s] predicting location" % uid
-    Y_feat = self.extractor.transform_uid(uid, access)
+    (mf, Y_feat) = self.extractor.transform_uid(uid, access)
     print >> sys.stderr, "[%s] features: %s" % (uid, str(Y_feat.shape))
 
     Y_loc = self.rm.predict(uid, Y_feat)
@@ -25,12 +25,15 @@ class InstaModel(object):
     total = sum(Y_loc.values())
     res_loc = dict([(k, float(v) / total) for k,v in Y_loc.items() ])
 
-    return res_loc
+    return (mf, res_loc)
 
 class Server(object):
 
-  def __init__(self, names, models, weights):
-    self._mw = dict(zip(names, zip(models, weights)))
+  def __init__(self, names, models, weights, caches):
+    self._mw = dict(zip(names, zip(models, weights, caches)))
+
+  def cache(self, name):
+    return self._mw[name][2]
 
   def model(self, name):
     return self._mw[name]
@@ -38,9 +41,9 @@ class Server(object):
   def predict(self, uid, access):
     # TODO it might be better to extract media feed here
     res_loc = {}
-    for n,(m,w) in self._mw.items():
+    for n,(m,w,c) in self._mw.items():
       print >> sys.stderr, "[%s] invoking model %s, w=%d" % (uid, n, w)
-      Y_loc = m.predict(uid, access)
+      mf, Y_loc = m.predict(uid, access, c)
       for k,v in Y_loc.items():
         if k not in res_loc:
           res_loc[k] = 0
@@ -50,7 +53,8 @@ class Server(object):
     res_loc = [ (k, (float(v) / total)) for k,v in res_loc.items() ]
     res_loc = sorted(res_loc, key=lambda x: x[1], reverse = True)
 
-    return res_loc
+    return (mf, res_loc)
+
 
 if __name__ == '__main__':
 
@@ -83,6 +87,7 @@ if __name__ == '__main__':
   models = []
   weights = []
   names = []
+  caches = []
 
   for model_name in config.get('server', 'models').split(','):
     print >> sys.stderr, "[server] Loading %s model" % model_name
@@ -91,12 +96,17 @@ if __name__ == '__main__':
       names.append(model_name)
       models.append(im)
       weights.append(config.getfloat(model_name, 'weight'))
+      # Hacky way to add caches
+      if config.has_option(model_name, 'cache_collection'):
+        caches.append(client[db][config.get(model_name, 'cache_collection')])
+      else:
+        caches.append(None)
       print >> sys.stderr, "[server] Loaded %s model" % model_name
 
   print >> sys.stderr, "[server] found %d models" % len(models)
   print >> sys.stderr, "[server] found %d weights" % len(weights)
 
-  server = Server(names, models, weights)
+  server = Server(names, models, weights, caches)
 
   # Enable CORS
   @app.hook('after_request')
@@ -135,11 +145,14 @@ if __name__ == '__main__':
       th = float(request.query['th'])
 
     print >> sys.stderr, "[server] predict request: %s, th=%d" % (uid, th)
-    res_loc = filter(lambda x: x[1] > th, server.predict(uid, access))
+    print >> sys.stderr, "[server] predicting locations"
+    mf, res_loc = server.predict(uid, access)
+    res_loc = filter(lambda x: x[1] > th, res_loc)
     # Augment our result with the location information
     res_loc = map(lambda x: (x[0], x[1], location_collection.find_one(
       { "_id": int(x[0]) }, { 'posts': { '$slice': max_location_posts } })), res_loc)
 
+    print >> sys.stderr, "[server] looking up top users"
     top_users = {}
     for k,s,v in res_loc:
       for p in v['posts']:
@@ -158,9 +171,41 @@ if __name__ == '__main__':
       res_usr.append((uid, score, x))
     res_usr = filter(lambda x: x[2] is not None, res_usr)
 
+    def get_results(m, data):
+      score = sum([ x['score'] for x in data ])
+      src = m.images['standard_resolution'].url
+      return { 'src': src, 'score': score, 'results': data }
+
+    print >> sys.stderr, "[server] looking up styles"
+    res_style = []
+    for m in mf:
+      res = server.cache('style_knn').fine_one({ '_id': m.id })
+      if res is not None:
+        res_style.append(get_results(m, res['result']))
+    res_style = sorted(res_style, key = lambda x: x['score'])[:10]
+
+    print >> sys.stderr, "[server] looking up places"
+    res_place = []
+    for m in mf:
+      res = server.cache('place_knn').fine_one({ '_id': m.id })
+      if res is not None:
+        res_object.append(get_results(m, res['result']))
+    res_place = sorted(res_place, key = lambda x: x['score'])[:10]
+
+    print >> sys.stderr, "[server] looking up objects"
+    res_object = []
+    for m in mf:
+      res = server.cache('object_knn').fine_one({ '_id': m.id })
+      if res is not None:
+        res_object.append(get_results(m, res['result']))
+    res_object = sorted(res_object, key = lambda x: x['score'])[:10]
+
     return { 
       'id': uid,
       'latency': (time.time() - now) * 1000,
+      'objects': res_object,
+      'places': res_place,
+      'styles': res_style,
       'users': [
         { 'id': k, 
           'name': v['uname'] if 'uname' in v else 'instagram_user', 
