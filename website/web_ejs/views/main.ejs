@@ -74,126 +74,47 @@
       <div class='row'><h4 class='col-sm-12 sub-header'>We found the following objects from your Instagram images:</h4></div>
 
       <div id='img-row' class='row'>
+
+<% for (var i=0; i<6; i++) { %>
         <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpf1/t51.2885-15/e15/11032786_1042544635773660_994869219_n.jpg">
-          <p class='img-label'>hat</p>
-          <p class='img-label'>boy</p>
-          <p class='img-label'>bed</p>
+          <img class='instagram-img' src="<%= objects[i].src %>">
+          <p class='img-label'><%= objects[i].results[0].name %></p>
+          <p class='img-label'><%= objects[i].results[1].name %></p>
+          <p class='img-label'><%= objects[i].results[2].name %></p>
         </div>
-        <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/12070951_1657984597750389_1323579535_n.jpg">
-          <p class='img-label'>baby</p>
-          <p class='img-label'>dress</p>
-          <p class='img-label'>toddler</p>
-        </div>
-        <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpa1/t51.2885-15/s640x640/sh0.08/e35/10818008_1209542492396104_1144503542_n.jpg">
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-        </div>
-        <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s640x640/sh0.08/e35/12139623_1677860749114910_1455021554_n.jpg">
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-        </div>
-        <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/11232475_948726105161015_875531919_n.jpg">
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-        </div>
-        <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpf1/t51.2885-15/e15/11032786_1042544635773660_994869219_n.jpg">
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-        </div>
+<% } %>
       </div> <!-- End of Image Processing Ability 1 -->
         
       <!-- Image Processing Ability 2 -->
       <div class='row'><h4 class='col-sm-12 sub-header'>We found the following styles from your Instagram images:</h4></div>
 
       <div id='img-row' class='row'>
+
+<% for (var i=0; i<6; i++) { %>
         <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s480x480/e35/12144285_859882274127574_628888982_n.jpg">
-          <p class='img-label'>hot</p>
-          <p class='img-label'>hdr</p>
-          <p class='img-label'>abstract</p>
+          <img class='instagram-img' src="<%= places[i].src %>">
+          <p class='img-label'><%= styles[i].results[0].id %></p>
+          <p class='img-label'><%= styles[i].results[1].id %></p>
+          <p class='img-label'><%= styles[i].results[2].id %></p>
         </div>
-        <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s480x480/e35/11917929_1618510751733989_1033863930_n.jpg">
-          <p class='img-label'>noir</p>
-          <p class='img-label'>romance</p>
-          <p class='img-label'>cool</p>
-        </div>
-        <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xap1/t51.2885-15/s640x640/sh0.08/e35/10817940_1506517333003828_335435600_n.jpg">
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-        </div>
-        <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/11881642_723561974441980_541890063_n.jpg">
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-        </div>
-        <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s640x640/sh0.08/e35/11875339_486275354867268_494527292_n.jpg">
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-        </div>
-        <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s640x640/sh0.08/e35/11909215_888654631210633_1767330619_n.jpg">
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-        </div>
+<% } %>
+
       </div> <!-- Image Processing Ability 2 -->
 
       <!-- Image Processing Ability 3 -->
       <div class='row'><h4 class='col-sm-12 sub-header'>We found the following sceneries from your Instagram images:</h4></div>
 
       <div id='img-row' class='row'>
+
+<% for (var i=0; i<6; i++) { %>
         <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xtf1/t51.2885-15/s640x640/sh0.08/e35/11849407_482974388550665_372119742_n.jpg">
-          <p class='img-label'>townhouse</p>
-          <p class='img-label'>telephone booth</p>
-          <p class='img-label'>entrance</p>
+          <img class='instagram-img' src="<%= places[i].src %>">
+          <p class='img-label'><%= places[i].results[0].id %></p>
+          <p class='img-label'><%= places[i].results[1].id %></p>
+          <p class='img-label'><%= places[i].results[2].id %></p>
         </div>
-        <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpa1/t51.2885-15/s640x640/sh0.08/e35/11950516_901779216558914_1291394961_n.jpg">
-          <p class='img-label'>steps</p>
-          <p class='img-label'>college</p>
-          <p class='img-label'>park</p>
-        </div>
-        <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xtf1/t51.2885-15/s640x640/sh0.08/e35/11849270_1603115673274599_591764519_n.jpg">
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-        </div>
-        <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xta1/t51.2885-15/s640x640/sh0.08/e35/12141821_150191375330328_949438526_n.jpg">
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-        </div>
-        <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xpt1/t51.2885-15/s640x640/sh0.08/e35/12071001_889648114452913_1021117796_n.jpg">
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-        </div>
-        <div class='col-sm-2'>
-          <img class='instagram-img' src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s640x640/sh0.08/e35/11910351_304573019666535_1638486529_n.jpg">
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-          <p class='img-label'>xxx</p>
-        </div>
+<% } %>
+
       </div> <!-- End of Image Processing Ability 3 -->
 
        <!-- Show People Recommendation Ability -->
@@ -234,8 +155,6 @@
   }  %>    
 
       <!-- End of People Recommendation Ability -->
-
-
 
     </div>  <!-- end of sub-container -->
 
