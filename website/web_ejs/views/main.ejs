@@ -19,7 +19,7 @@
       </div>
       <div>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href='#'>Hi, <%= user.username %>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |</a></li>
+          <li><a href='#'>Hi, @<%= user.username %>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |</a></li>
           <li id='logout-btn'><a href="/logout">Logout</a></li>
         </ul>
       </div>
@@ -27,35 +27,19 @@
 
     <div id='sub-container'>
 
-      <!-- Submit Form -->
-      <div id='country-submit' class='row'>
-        <div>
-          <form class="navbar-form navbar-left" role="search">
-            <div class="form-group">
-              <!-- <input type="text" class="form-control" placeholder="Search"> -->
-              <label for="sel1">Please choose the country you'd like to visit:&nbsp;&nbsp;&nbsp;&nbsp;</label>
-              <select class="form-control" id="sel1">
-                <option>Select Country:</option>
-                <option>United States</option>
-                <option>France</option>
-                <option>China</option>
-              </select>
-            </div>
-            <button id='submit-btn' type="submit" class="btn btn-primary">Submit</button> (COUNTRY SELECTION NOT FUNCTIONAL YET)
-          </form>     
-        </div>
-      </div>    
+      <!-- TopRecommended Cities -->
+      <div class='row'><h3 class='col-sm-12'>Our Top Recommended Cities for You</h3></div>
 
-      <!-- Top 3 Recommended Cities -->
-      <div class='row'><h3 class='col-sm-12'>Our Top 3 Recommended Cities for You</h3></div>
-
-<% for (var i=0; i<3; i++) { %>
+<% for (var i=0; i<20; i++) { %>
 
       <div id='img-row' class='row'>
-        <div class='col-sm-2'><p id='city-name'><%=locations[i].name%></p></div>
+        <div class='col-sm-2'>
+          <p class='city-name'><%=locations[i].name%></p>
+          <p class='score'>Score: <%= Math.round(locations[i].score*10000)/100 %>%</p>
+        </div>
 
 <%   for (var j=0; j<5; j++ ) { %>
-  <!-- <p><%=locations[i].name%></p> -->
+
         <div class='col-sm-2'>
 
 <%     if (j < locations[i].posts.length) { %>
@@ -63,7 +47,7 @@
    <!-- <p><%- JSON.stringify(locations[i].posts[j])%></p> -->
 
           <img class='instagram-img' src=<%= locations[i].posts[j].src%>>
-          <p class='img-label'><%= locations[i].posts[j].name%></p>
+          <p class='img-label'><a href='https://www.instagram.com/<%= locations[i].posts[j].name%>'>@<%= locations[i].posts[j].name%></a></p>
 
 <%     } %>
         </div>
@@ -80,14 +64,14 @@
           <h3>
             How did we make these personalized recommendations?
           </h3>
-          <h5>
-            Our recommendation engine analyzes your Instagram images and textual details of your post to discover your potential preferences. Then, we would find the places that are related to your preferences and are photographed by Instagrammers similar to you. We would like to showcases our image processing attempt, which is one of the core components of our recommendation engine.
-          </h5>
+          <h4 class='description'>
+            Step 1: Our recommendation engine analyzes your Instagram images and textual details of your post to discover your potential preferences. We would like to showcases our image processing attempt, which is one important component of our recommendation engine:
+          </h4>
         </div>
       </div>
 
       <!-- Image Processing Ability 1 -->
-      <div class='row'><h4 class='col-sm-12'>We found the following objects from your Instagram images:</h4></div>
+      <div class='row'><h4 class='col-sm-12 sub-header'>We found the following objects from your Instagram images:</h4></div>
 
       <div id='img-row' class='row'>
         <div class='col-sm-2'>
@@ -129,7 +113,7 @@
       </div> <!-- End of Image Processing Ability 1 -->
         
       <!-- Image Processing Ability 2 -->
-      <div class='row'><h4 class='col-sm-12'>We found the following styles from your Instagram images:</h4></div>
+      <div class='row'><h4 class='col-sm-12 sub-header'>We found the following styles from your Instagram images:</h4></div>
 
       <div id='img-row' class='row'>
         <div class='col-sm-2'>
@@ -171,7 +155,7 @@
       </div> <!-- Image Processing Ability 2 -->
 
       <!-- Image Processing Ability 3 -->
-      <div class='row'><h4 class='col-sm-12'>We found the following sceneries from your Instagram images:</h4></div>
+      <div class='row'><h4 class='col-sm-12 sub-header'>We found the following sceneries from your Instagram images:</h4></div>
 
       <div id='img-row' class='row'>
         <div class='col-sm-2'>
@@ -210,14 +194,55 @@
           <p class='img-label'>xxx</p>
           <p class='img-label'>xxx</p>
         </div>
-      </div> <!-- Image Processing Ability 3 -->
+      </div> <!-- End of Image Processing Ability 3 -->
+
+       <!-- Show People Recommendation Ability -->
+      <div class='row'>
+        <div class='col-sm-12'>
+          <h4 class='description'>
+            Step 2: We would find Instagrammers who are most similar to you. This allows us to recommend places that are related to your preferences and are photographed by Instagrammers similar to you. Here is the showcase for the predicted similar Instagram users, which is another important component of our recommendation engine:
+          </h4>
+        </div>
+      </div>
+      <div class='row'><h4 class='col-sm-12 sub-header'>Instagrammers who are similar to you:</h4></div>
+
+<% for (var i=0; i<20; i++) { %>
+
+      <div id='img-row' class='row'>
+        <div class='col-sm-2'>
+          <p class='instagrammer-name'><a href='https://www.instagram.com/<%= users[i].name%>'>@<%=users[i].name%></a></p>
+          <p class='score'>Score: <%= Math.round(users[i].score*10000)/100 %>%</p>
+        </div>
+
+<%   for (var j=0; j<5; j++ ) { %>
+
+        <div class='col-sm-2'>
+
+<%     if (j < users[i].posts.length) { %>
+
+   <!-- <p><%- JSON.stringify(locations[i].posts[j])%></p> -->
+
+          <img class='instagram-img' src=<%= users[i].posts[j].src%>>
+          <!-- <p class='img-label'><a href='https://www.instagram.com/<%= users[i].posts[j].name%>'>@<%= users[i].posts[j].name%></a></p> -->
+
+<%     } %>
+        </div>
+
+<%  } %>
+      </div> 
+<% 
+  }  %>    
+
+      <!-- End of People Recommendation Ability -->
+
+
 
     </div>  <!-- end of sub-container -->
 
   </div><!-- /.container-fluid -->
 
 
-
+ 
 
 
 </body>
