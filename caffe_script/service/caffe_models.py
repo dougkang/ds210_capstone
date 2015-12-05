@@ -11,6 +11,8 @@ from PIL import Image
 import os
 import caffe
 import sys
+import tempfile
+import shutil
 
 class Caffe_Models():
     
@@ -51,7 +53,7 @@ class Caffe_Models():
         self.num_guesses=5
         self.images = {}
         self.predictions = {}
-        self.DATA_PATH = "../../../dataset/"
+	self.DATA_PATH = tempfile.mkdtemp()
         self.caffe_root = '../../../caffe/'
 
     #main function for running the baseline script
@@ -64,8 +66,8 @@ class Caffe_Models():
     #generate images
     def generate_image(self,request):
         #clean up temp file
-        for f in os.listdir(self.DATA_PATH+"temp/"):
-            os.remove(self.DATA_PATH+"temp/"+f)
+        #for f in os.listdir(self.DATA_PATH+"temp/"):
+        #    os.remove(self.DATA_PATH+"temp/"+f)
            
         #for each feed_id, create image and set index for images
         for feed_id, image_url in request.iteritems():
@@ -76,7 +78,7 @@ class Caffe_Models():
                 #figure out filename
                 path = urlparse.urlsplit(image_url).path
                 filename = posixpath.basename(path)
-                image_path = self.DATA_PATH+"temp/"+filename
+                image_path = self.DATA_PATH+filename
                 #download to local folder and resize image
                 urllib.urlretrieve(image_url,image_path)
                 
@@ -127,7 +129,7 @@ class Caffe_Models():
 
         if len(self.images) == 0:
            return
-        
+
         # Set Caffe to CPU mode, load the net in the test phase for inference, and configure input preprocessing.
         caffe.set_mode_cpu()
         ##CHANGE
@@ -202,3 +204,6 @@ class Caffe_Models():
                 pred_id = toks[0]
                 pred_name = ' '.join(toks[1:])
                 self.predictions[feed_id].append({"id":pred_id,"name":pred_name,"score":float(top_prob)}) 
+
+	#clean temp dir
+	shutil.rmtree(self.DATA_PATH)
