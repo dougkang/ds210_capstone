@@ -17,4 +17,14 @@ sudo apt-get install -y nodejs
 sudo apt-get install git
 sudo npm install pm2 -g
 
+
+sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 3000
+
+pm2 start hello.js
+pm2 stop hello.js
+
+pm2 start /home/ubuntu/ds210_capstone/website/web_ejs app.js
+pm2 restart /home/ubuntu/ds210_capstone/website/web_ejs app.js
+
+# ssh -i w210_keypair.pem ubuntu@52.90.171.178
 # scp -i w210_keypair.pem -r /Users/maktrix/Dropbox/Berkeley/W210_Capstone/ds210_capstone/website/web_ejs ubuntu@52.90.171.178:.
