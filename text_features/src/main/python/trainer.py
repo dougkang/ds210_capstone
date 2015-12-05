@@ -114,6 +114,15 @@ if __name__ == "__main__":
       client = MongoClient(host, port)
       cache = client[db][config.get(m, 'cache_collection')]
       trainer = Trainer(train_img.post_img, train_pmodel.post_knn, cache)
+    elif m == 'style_userknn' or m == 'object_userknn' or m == 'place_userknn':
+      host = config.get('mongo', 'host')
+      port = config.getint('mongo', 'port')
+      db = config.get('mongo', 'db')
+      print >> sys.stderr, "[trainer] Connecting to %s:%d/%s" % \
+         (host, port, db)
+      client = MongoClient(host, port)
+      cache = client[db][config.get(m, 'cache_collection')]
+      trainer = Trainer(train_img.user_img, train_lmodel.post_knn, cache)
     else:
       raise ValueError("Unrecognized model %s" % m)
 
