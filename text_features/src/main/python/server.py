@@ -15,7 +15,7 @@ class InstaModel(object):
     self.extractor = extractor
     self.rm = rm
 
-  def predict(self, uid, access):
+  def predict(self, uid, access, cache):
     print >> sys.stderr, "[%s] predicting location" % uid
     (mf, Y_feat) = self.extractor.transform_uid(uid, access)
     print >> sys.stderr, "[%s] features: %s" % (uid, str(Y_feat.shape))
