@@ -4,6 +4,7 @@ import sys
 import pickle
 import time
 from pymongo import MongoClient
+from multiprocessing import Process, Pipe
 
 class InstaModel(object):
   '''
@@ -15,9 +16,9 @@ class InstaModel(object):
     self.extractor = extractor
     self.rm = rm
 
-  def predict(self, uid, access, cache):
+  def predict(self, uid, access, cache = None):
     print >> sys.stderr, "[%s] predicting location" % uid
-    (mf, Y_feat) = self.extractor.transform_uid(uid, access)
+    (mf, Y_feat) = self.extractor.transform_uid(uid, access, cache)
     print >> sys.stderr, "[%s] features: %s" % (uid, str(Y_feat.shape))
 
     Y_loc = self.rm.predict(uid, Y_feat)
@@ -41,20 +42,37 @@ class Server(object):
   def predict(self, uid, access):
     # TODO it might be better to extract media feed here
     res_loc = {}
+
+    def f(n, m, w, c, conn):
+      mf, Y_loc = m.predict(uid, access, c)
+      conn.send((mf, Y_loc))
+      conn.close()
+
+    p_conns = []
     for n,(m,w,c) in self._mw.items():
       print >> sys.stderr, "[%s] invoking model %s, w=%d" % (uid, n, w)
-      mf, Y_loc = m.predict(uid, access, c)
+      p_conn, c_conn = Pipe()
+      p = Process(target=f, args=(n, m, w, c, c_conn))
+      p_conns.append((p_conn, p))
+      p.start()
+
+    for p_conn,p in p_conns:
+      mf, Y_loc = p_conn.recv()
       for k,v in Y_loc.items():
+        k = int(k)
         if k not in res_loc:
           res_loc[k] = 0
         res_loc[k] = res_loc[k] + v*w
+      print >> sys.stderr, "[%s] processed model results" % uid
 
+      p.join()
+
+    print >> sys.stderr, "[%s] all models returned" % uid
     total = sum(res_loc.values())
     res_loc = [ (k, (float(v) / total)) for k,v in res_loc.items() ]
     res_loc = sorted(res_loc, key=lambda x: x[1], reverse = True)
 
     return (mf, res_loc)
-
 
 if __name__ == '__main__':
 
@@ -82,6 +100,11 @@ if __name__ == '__main__':
   client = MongoClient(host, port)
   location_collection = client[db][config.get('server', 'location_collection')]
   media_feed_collection = client[db][config.get('server', 'media_feed_collection')]
+  # Kinda hacky, but assumes that all image model results have been saved in these
+  # caches either previously or during the prediction stage.
+  style_cache_collection = client[db][config.get('server', 'style_cache_collection')]
+  object_cache_collection = client[db][config.get('server', 'object_cache_collection')]
+  place_cache_collection = client[db][config.get('server', 'place_cache_collection')]
 
   # Initialize models
   models = []
@@ -179,7 +202,7 @@ if __name__ == '__main__':
     print >> sys.stderr, "[server] looking up styles"
     res_style = []
     for m in mf:
-      res = server.cache('style_knn').fine_one({ '_id': m.id })
+      res = style_cache_collection.find_one({ '_id': m.id })
       if res is not None:
         res_style.append(get_results(m, res['result']))
     res_style = sorted(res_style, key = lambda x: x['score'])[:10]
@@ -187,15 +210,15 @@ if __name__ == '__main__':
     print >> sys.stderr, "[server] looking up places"
     res_place = []
     for m in mf:
-      res = server.cache('place_knn').fine_one({ '_id': m.id })
+      res = place_cache_collection.find_one({ '_id': m.id })
       if res is not None:
-        res_object.append(get_results(m, res['result']))
+        res_place.append(get_results(m, res['result']))
     res_place = sorted(res_place, key = lambda x: x['score'])[:10]
 
     print >> sys.stderr, "[server] looking up objects"
     res_object = []
     for m in mf:
-      res = server.cache('object_knn').fine_one({ '_id': m.id })
+      res = object_cache_collection.find_one({ '_id': m.id })
       if res is not None:
         res_object.append(get_results(m, res['result']))
     res_object = sorted(res_object, key = lambda x: x['score'])[:10]
@@ -208,7 +231,7 @@ if __name__ == '__main__':
       'styles': res_style,
       'users': [
         { 'id': k, 
-          'name': v['uname'] if 'uname' in v else 'instagram_user', 
+          'name': v['name'] if 'name' in v else 'instagram_user', 
           'score': s, 
           'posts': [ { 
             'id': x['id'],
@@ -217,7 +240,7 @@ if __name__ == '__main__':
           } for k,s,v in res_usr ],
       'locations': [ 
         { 'id': k, 
-          'name': v['city'], 
+          'name': "%s, %s" % (v['city'], v['country']), 
           'score': s, 
           'posts': v['posts'] 
           } for k,s,v in res_loc ] }
