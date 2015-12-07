@@ -120,16 +120,13 @@ def assign_airport(
     data = { 
         'id': r['mid'], 'name': r['uname'], 'uid': r['uid'], 
         'src': r['url'], 'likes': r['likes'] }
-    res = mongo.find_one({ '_id': r['airport'] })
-    res = res['posts'] if res is not None else []
-    res = filter(lambda x: x['uid'] == data['uid'], res)
-    if len(res) > 0 and res[0]['likes'] < data['likes']:
-      res = res[:res.index(res[0])] + res[res.index(res[0])+1:]
-    res.append(data) 
-    res = sorted(res, key = lambda x: x['likes'], reverse = True)[:100]
-        
+
     mongo.update_one({ '_id': r['airport'] }, 
-      { '$set': { "posts": res } })
+      { '$push': { 
+        "posts": { 
+          '$each': [ data ],
+          '$sort': { 'likes': -1 },
+          '$slice': -150 } } })
 
   client.close()
 
