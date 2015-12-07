@@ -105,6 +105,8 @@ class ImageFeatureExtractor(FeatureExtractor):
           print >> sys.stderr, "[imgfeat] %d/%d" % (curr,len(urls))
           print >> sys.stderr, "[imgfeat] batch threshold reached, hitting image server %s" % self.url
           for k,v in self._send_request(data).iteritems():
+            # Use the top results only
+            v = v[:1]
             idx = [ self._vocab[x['id'].lower()] for x in v ]
             vs = [ x['score'] for x in v ]
             res[curr, idx] = vs
