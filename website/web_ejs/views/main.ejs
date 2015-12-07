@@ -75,7 +75,7 @@
 
       <div id='img-row' class='row'>
 
-<% for (var i=0; i<6; i++) { %>
+<% for (var i=0; i<Math.min(objects.length, 6); i++) { %>
         <div class='col-sm-2'>
           <img class='instagram-img' src="<%= objects[i].src %>">
           <p class='img-label'><%= objects[i].results[0].name %></p>
@@ -90,7 +90,7 @@
 
       <div id='img-row' class='row'>
 
-<% for (var i=0; i<6; i++) { %>
+<% for (var i=0; i<Math.min(objects.length, 6); i++) { %>
         <div class='col-sm-2'>
           <img class='instagram-img' src="<%= places[i].src %>">
           <p class='img-label'><%= styles[i].results[0].id %></p>
@@ -106,7 +106,7 @@
 
       <div id='img-row' class='row'>
 
-<% for (var i=0; i<6; i++) { %>
+<% for (var i=0; i<Math.min(objects.length, 6); i++) { %>
         <div class='col-sm-2'>
           <img class='instagram-img' src="<%= places[i].src %>">
           <p class='img-label'><%= places[i].results[0].id %></p>

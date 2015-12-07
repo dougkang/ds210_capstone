@@ -71,11 +71,7 @@ passport.use(new InstagramStrategy({
   }
 ));
 
-
-
-
 var app = express();
-
 
 // set up our express application
 app.set('views', __dirname + '/views');
@@ -152,7 +148,10 @@ app.get('/main/:id', ensureAuthenticated, function(req, res){
       var data_json = JSON.parse(body);
       var locations = data_json.locations;
       var users = data_json.users;
-      res.render('main', { user: req.user, locations: locations, users: users});
+      var objects = data_json.objects;
+      var styles = data_json.styles;
+      var places = data_json.places;
+      res.render('main', { user: req.user, locations: locations, users: users, objects: objects, styles:styles, places: places});
     }
   })
 });
