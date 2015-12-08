@@ -180,13 +180,13 @@ app.get('/auth/instagram',
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
 app.get('/auth/instagram/callback', 
-  passport.authenticate('instagram', { failureRedirect: '/login' }),
+  passport.authenticate('instagram', { failureRedirect: '/' }),
   function(req, res) {
     res.redirect('/main');
   });
 
 app.get('/logout', function(req, res){
-  req.logOut();
+  req.logout();
   req.session.destroy(function(err){
     res.clearCookie('connect.sid');
     res.redirect('/');
@@ -202,5 +202,5 @@ app.listen(port);
 //   login page.
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login')
+  res.redirect('/')
 }
