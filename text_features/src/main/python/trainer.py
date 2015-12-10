@@ -105,6 +105,8 @@ if __name__ == "__main__":
       trainer = Trainer(train_tfidf.post_tfidf, train_pmodel.post_nb)
     elif m == 'text_userknn':
       trainer = Trainer(train_tfidf.user_tfidf, train_lmodel.post_knn)
+    elif m == 'tag_userknn':
+      trainer = Trainer(train_tfidf.user_tag, train_lmodel.post_knn)
     elif m == 'style_knn' or m == 'object_knn' or m == 'place_knn':
       host = config.get('mongo', 'host')
       port = config.getint('mongo', 'port')
