@@ -4,7 +4,7 @@ import pickle
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
-from extractor import TextFeatureExtractor
+from extractor import TextFeatureExtractor, TagFeatureExtractor
 
 def post_tfidf(df, **kwargs):
   # Generate a dataset that doesn't group users
@@ -17,6 +17,34 @@ def post_tfidf(df, **kwargs):
   print "Post BOW Dataset: %s, %s" % (str(X_bow.shape), str(y_loc.shape))
 
   extractor = TextFeatureExtractor(tfidf)
+
+  return (X_bow, y_loc, extractor)
+
+def user_tag(df, loc_only = False, **kwargs):
+  # Group our posts by userid and combine the bow and locations into a single feature
+  data = { 'uid': [], 'tags': [], 'loc': [] }
+  for k,vs in df.groupby('uid').groups.iteritems():
+      locs = dict(df.loc[vs]['airport'].value_counts()).items()
+      # We are only interested in users with at least one location
+      if len(locs) > 0:
+          data['uid'].append(k)
+          data['loc'].append(locs)
+          tags = ' '.join([ unicode(x) if unicode(x) != 'NaN' else "" for x in df.loc[vs]['tags']]).strip()
+          data['tags'].append(tags)
+
+  df_user_bow = pd.DataFrame(data)
+  df_user_bow = df_user_bow.loc[[ len(x.strip()) > 0 for x in df_user_bow['tags'] ]]
+
+  if loc_only:
+    df_user_bow = df_user_bow.loc[pd.notnull(df_user_bow['loc'])]
+
+  tfidf_user = TfidfVectorizer(norm='l2', max_df=0.3, min_df=0.1)
+  X_bow = tfidf_user.fit_transform(df_user_bow['tags'])
+  y_loc = df_user_bow['loc']
+                     
+  print "User tags Dataset: %s, %s" % (str(X_bow.shape), str(y_loc.shape))
+
+  extractor = TagFeatureExtractor(tfidf_user)
 
   return (X_bow, y_loc, extractor)
 
