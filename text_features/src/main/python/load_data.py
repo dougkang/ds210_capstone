@@ -28,7 +28,7 @@ def load(limit = None,
     if 'feed' not in x:
       continue
 
-    for y in x['feed']:
+    for y in x['feed'][:30]:
       cnt = cnt + 1
       if cnt % 100 == 0:
         print "%d documents loaded" % cnt
