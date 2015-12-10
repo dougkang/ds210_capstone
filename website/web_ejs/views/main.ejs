@@ -30,29 +30,24 @@
       <!-- TopRecommended Cities -->
       <div class='row'><h3 class='col-sm-12'>Our Top Recommended Cities for You</h3></div>
 
-<% for (var i=0; i<20; i++) { %>
+<% for (var i=0; i<Math.min(locations.length, 20); i++) { %>
 
       <div id='img-row' class='row'>
         <div class='col-sm-2'>
           <p class='city-name'><%=locations[i].name%></p>
-          <p class='score'>Score: <%= Math.round(locations[i].score*10000)/100 %>%</p>
+          <p class='score'>Score: <%= Math.round(locations[i].score*10000)/100 %></p>
         </div>
 
-<%   for (var j=0; j<5; j++ ) { %>
+<%   if (locations[i]) {
+       for (var j=0; j<Math.min(locations[i].posts.length, 5); j++) { %>
 
         <div class='col-sm-2'>
-
-<%     if (j < locations[i].posts.length) { %>
-
-   <!-- <p><%- JSON.stringify(locations[i].posts[j])%></p> -->
-
           <img class='instagram-img' src=<%= locations[i].posts[j].src%>>
           <p class='img-label'><a href='https://www.instagram.com/<%= locations[i].posts[j].name%>'>@<%= locations[i].posts[j].name%></a></p>
-
-<%     } %>
         </div>
 
-<%  } %>
+<%     }
+     } %>
       </div> 
 <% 
   }  %>    
@@ -75,7 +70,7 @@
 
       <div id='img-row' class='row'>
 
-<% for (var i=0; i<Math.min(objects.length, 6); i++) { %>
+<% for (var i=0; i<Math.min(objects.length, 6); i++) { console.log(i);%>
         <div class='col-sm-2'>
           <img class='instagram-img' src="<%= objects[i].src %>">
           <p class='img-label'><%= objects[i].results[0].name %></p>
@@ -90,9 +85,9 @@
 
       <div id='img-row' class='row'>
 
-<% for (var i=0; i<Math.min(objects.length, 6); i++) { %>
+<% for (var i=0; i<Math.min(styles.length, 6); i++) { %>
         <div class='col-sm-2'>
-          <img class='instagram-img' src="<%= places[i].src %>">
+          <img class='instagram-img' src="<%= styles[i].src %>">
           <p class='img-label'><%= styles[i].results[0].id %></p>
           <p class='img-label'><%= styles[i].results[1].id %></p>
           <p class='img-label'><%= styles[i].results[2].id %></p>
@@ -106,7 +101,7 @@
 
       <div id='img-row' class='row'>
 
-<% for (var i=0; i<Math.min(objects.length, 6); i++) { %>
+<% for (var i=0; i<Math.min(places.length, 6); i++) { %>
         <div class='col-sm-2'>
           <img class='instagram-img' src="<%= places[i].src %>">
           <p class='img-label'><%= places[i].results[0].id %></p>
@@ -127,29 +122,21 @@
       </div>
       <div class='row'><h4 class='col-sm-12 sub-header'>Instagrammers who are similar to you:</h4></div>
 
-<% for (var i=0; i<20; i++) { %>
+<% for (var i=0; i<Math.min(users.length, 20); i++) { %>
 
       <div id='img-row' class='row'>
         <div class='col-sm-2'>
           <p class='instagrammer-name'><a href='https://www.instagram.com/<%= users[i].name%>'>@<%=users[i].name%></a></p>
           <p class='score'>Score: <%= Math.round(users[i].score*10000)/100 %>%</p>
         </div>
-
-<%   for (var j=0; j<5; j++ ) { %>
-
-        <div class='col-sm-2'>
-
-<%     if (j < users[i].posts.length) { %>
-
-   <!-- <p><%- JSON.stringify(locations[i].posts[j])%></p> -->
-
-          <img class='instagram-img' src=<%= users[i].posts[j].src%>>
-          <!-- <p class='img-label'><a href='https://www.instagram.com/<%= users[i].posts[j].name%>'>@<%= users[i].posts[j].name%></a></p> -->
-
-<%     } %>
+<%   if (users[i]) {
+       for (var j=0; j<Math.min(users[i].posts.length, 5); j++) { %>
+         <div class='col-sm-2'>
+           <img class='instagram-img' src=<%= users[i].posts[j].src%>>
         </div>
+<%     } %>
+<%     } %>
 
-<%  } %>
       </div> 
 <% 
   }  %>    
