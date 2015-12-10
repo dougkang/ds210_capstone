@@ -59,6 +59,25 @@ class TextFeatureExtractor(FeatureExtractor):
     # TODO some additional cleanup of text to go here
     return self._tfidf.transform([ bow ])
 
+class TagFeatureExtractor(FeatureExtractor):
+  '''
+  Given a pretrained tfidf model and a media feed, extract the TFIDF values 
+  of the captions
+  '''
+
+  def __init__(self, tfidf, **kwargs):
+    self._tfidf = tfidf
+
+  def transform(self, uid, media_feed, cache = None):
+    print >> sys.stderr, "[%s] transforming posts into text features" % uid
+    bow = "" 
+    for m in media_feed:
+      if hasattr(m, 'tags'):
+        bow = bow + ' ' + ' '.join([ x.name for x in m.tags ])
+    print >> sys.stderr, "[%s] text length: %d" % (uid, len(bow))
+    # TODO some additional cleanup of text to go here
+    return self._tfidf.transform([ bow ])
+
 class ImageFeatureExtractor(FeatureExtractor):
   '''
   Given a url to the image model server and a media feed, extract image features
