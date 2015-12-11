@@ -47,7 +47,7 @@ class Server(object):
       try:
         mf, Y_loc = m.predict(uid, access, c)
         conn.send((mf, Y_loc))
-      except Error:
+      except Exception:
         conn.send(([], {}))
       finally:
         conn.close()
