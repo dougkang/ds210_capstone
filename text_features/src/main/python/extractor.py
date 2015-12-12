@@ -10,7 +10,7 @@ from instagram.bind import InstagramAPIError, InstagramClientError
 # Initialize our API
 client_id = os.environ.get('INSTAGRAM_CLIENT_ID')
 client_secret = os.environ.get('INSTAGRAM_CLIENT_SECRET')
-feed_limit = 100
+feed_limit = 50
 
 class FeatureExtractor(object):
   '''

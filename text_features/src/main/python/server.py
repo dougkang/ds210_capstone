@@ -44,9 +44,13 @@ class Server(object):
     res_loc = {}
 
     def f(n, m, w, c, conn):
-      mf, Y_loc = m.predict(uid, access, c)
-      conn.send((mf, Y_loc))
-      conn.close()
+      try:
+        mf, Y_loc = m.predict(uid, access, c)
+        conn.send((mf, Y_loc))
+      except Exception:
+        conn.send(([], {}))
+      finally:
+        conn.close()
 
     p_conns = []
     for n,(m,w,c) in self._mw.items():
@@ -179,10 +183,10 @@ if __name__ == '__main__':
     top_users = {}
     for k,s,v in res_loc:
       for p in v['posts']:
-        uid = p['uid']
-        if uid not in top_users:
-          top_users[uid] = 0
-        top_users[uid] = top_users[uid] + s
+        x = p['uid']
+        if x not in top_users:
+          top_users[x] = 0
+        top_users[x] = top_users[x] + s
     # TODO hardcoded to 25 top occuring users here
     top_users = sorted(top_users.items(), 
         key=lambda x: x[1], reverse=True)[:25]
@@ -226,6 +230,8 @@ if __name__ == '__main__':
     return { 
       'id': uid,
       'latency': (time.time() - now) * 1000,
+      # This number currently maxes out at our feed limit, which is 50
+      'n': len(mf),
       'objects': res_object,
       'places': res_place,
       'styles': res_style,

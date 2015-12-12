@@ -68,6 +68,7 @@
   width: 120px;
   height: 120px;
   display: block;
+<<<<<<< HEAD
   margin: 5px auto 0px auto;
 }
 
@@ -75,6 +76,9 @@
   margin: 5px auto;
   width: 120px;
   overflow: hidden;
+=======
+  margin: 0px auto
+>>>>>>> a3b44d175bc138819935d6f2bade9564d1a38022
 }
 
 .city-name{
