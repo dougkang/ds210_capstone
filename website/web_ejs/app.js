@@ -119,10 +119,12 @@ app.get('/main', ensureAuthenticated, function(req, res){
         var locations = data_json.locations;
         var users = data_json.users;
         var objects = data_json.objects;
-        var styles = data_json.styles;
         var places = data_json.places;
+        var tags = data_json.tags;
 
-        res.render('main', { user: req.user, locations: locations, users: users, objects: objects, styles:styles, places: places});
+        res.render('main', { user: req.user, locations: locations, users: users, objects: objects, tags: tags, places: places});
+      } else {
+        res.send(response ? response.statusCode : 500, error)
       }
     })
   }
@@ -130,10 +132,10 @@ app.get('/main', ensureAuthenticated, function(req, res){
     var locations = data.locations;
     var users = data.users;
     var objects = data.objects;
-    var styles = data.styles;
+    var tags = data.tags;
     var places = data.places;
 
-    res.render('main', { user: req.user, locations: locations, users: users, objects: objects, styles:styles, places: places});
+    res.render('main', { user: req.user, locations: locations, users: users, objects: objects, tags: tags, places: places});
   }
 
 
@@ -149,9 +151,11 @@ app.get('/main/:id', ensureAuthenticated, function(req, res){
       var locations = data_json.locations;
       var users = data_json.users;
       var objects = data_json.objects;
-      var styles = data_json.styles;
+      var tags = data_json.tags;
       var places = data_json.places;
-      res.render('main', { user: req.user, locations: locations, users: users, objects: objects, styles:styles, places: places});
+      res.render('main', { user: req.user, locations: locations, users: users, objects: objects, tags: tags, places: places});
+    } else {
+      res.send(response ? response.statusCode : 500, error)
     }
   })
 });

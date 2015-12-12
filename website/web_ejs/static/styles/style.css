@@ -68,7 +68,13 @@
   width: 120px;
   height: 120px;
   display: block;
-  margin: 0px auto
+  margin: 5px auto 0px auto;
+}
+
+.img-label{
+  margin: 5px auto;
+  width: 120px;
+  overflow: hidden;
 }
 
 .city-name{
