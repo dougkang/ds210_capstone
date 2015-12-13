@@ -1,0 +1,40 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <title>About Instaplaces</title>
+</head>
+
+<body>
+<h2>Why Instaplaces?</h2>
+
+<ul>
+  <li>Tourism is a $1.2 trillion industry</li>
+  <li>Utilizes media-rich social content</li>
+  <li>Overcomes cold-start problem</li>
+</ul>
+
+<h2>How does Instaplaces create personalized recommendations for travelers?</h2>
+<img src="pipeline.png" alt="Pipeline" style="width:585px;height:471px;">
+
+<p>Our models consist of a feature extraction component and a clustering component. The models are trained and evaluated in parallel. They take a collection of posts and outputs a list of top locations sorted by confidence. An online linear computation component combines the models based on predefined weights.</p>
+
+<p>The image models utilize <a href="caffe.berkeleyvision.org">Caffe</a>, an image processing library with pretrained image recognition models. The pretrained models Instaplaces uses detect objects and scenes from Instagram images.</p>
+
+<p>Here are example objects found:</p>
+<p><img src="objects.png" alt="Objects" style="width:500px;height:300px;"></p>
+<p>Here are example scenes found:</p>
+<p><img src="places.png" alt="Places" style="width:500px;height:300px;"></p>
+
+
+
+<p>The text model analyzes Instagram captions as users generally accompany their photos with some text, which provides another set of features for recommendations.</p>
+
+<h2>How can you get travel recommendations?</h2>
+
+<p>You must have a valid Instagram account with at least ten photos posted. Fewer photos may result in inaccurate results. Click <img src="http://instaplaces.co/img/insta_button.png"> on the home page.</p> 
+
+<p>Instaplaces will show you the top destinations in order of decreasing confidence and corresponding pictures from each destination. Also, Instagram users who are similar to you are displayed.</p>
+
+</body>
+</html>

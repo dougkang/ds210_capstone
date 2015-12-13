@@ -160,6 +160,10 @@ app.get('/main/:id', ensureAuthenticated, function(req, res){
   })
 });
 
+//go to static detailed explanation page
+app.get('/details', function(req, res){
+  res.render('details');
+});
 
 /// API:    /main/user => 
 
