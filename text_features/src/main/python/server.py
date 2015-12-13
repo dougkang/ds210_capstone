@@ -3,6 +3,7 @@ import argparse
 import sys
 import pickle
 import time
+import random
 from pymongo import MongoClient
 from multiprocessing import Process, Pipe
 
@@ -54,7 +55,7 @@ class Server(object):
 
     p_conns = []
     for n,(m,w,c) in self._mw.items():
-      print >> sys.stderr, "[%s] invoking model %s, w=%d" % (uid, n, w)
+      print >> sys.stderr, "[%s] invoking model %s, w=%f" % (uid, n, w)
       p_conn, c_conn = Pipe()
       p = Process(target=f, args=(n, m, w, c, c_conn))
       p_conns.append((p_conn, p))
@@ -65,16 +66,15 @@ class Server(object):
       for k,v in Y_loc.items():
         k = int(k)
         if k not in res_loc:
-          res_loc[k] = 0
-        res_loc[k] = res_loc[k] + v*w
+          res_loc[k] = 0.0
+        print >> sys.stderr, "[%s] predicted %s: %s" % (uid,k,v)
+        res_loc[k] = res_loc[k] + (float(v)*w)
       print >> sys.stderr, "[%s] processed model results" % uid
 
       p.join()
 
     print >> sys.stderr, "[%s] all models returned" % uid
-    total = sum(res_loc.values())
-    res_loc = [ (k, (float(v) / total)) for k,v in res_loc.items() ]
-    res_loc = sorted(res_loc, key=lambda x: x[1], reverse = True)
+    res_loc = sorted(res_loc.items(), key=lambda x: x[1], reverse = True)
 
     return (mf, res_loc)
 
@@ -141,6 +141,7 @@ if __name__ == '__main__':
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = 'PUT, GET, POST, DELETE, OPTIONS'
     response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
+
   @route('/')
   def index():
     print >> sys.stderr, "[server] status request"
@@ -164,21 +165,7 @@ if __name__ == '__main__':
     del res['_id']
     return res
 
-  @route('/predict/<access>/<uid>')
-  def predict(uid, access):
-    now = time.time()
-    th = 0.0
-    if 'th' in request.query:
-      th = float(request.query['th'])
-
-    print >> sys.stderr, "[server] predict request: %s, th=%d" % (uid, th)
-    print >> sys.stderr, "[server] predicting locations"
-    mf, res_loc = server.predict(uid, access)
-    res_loc = filter(lambda x: x[1] > th, res_loc)
-    # Augment our result with the location information
-    res_loc = map(lambda x: (x[0], x[1], location_collection.find_one(
-      { "_id": int(x[0]) }, { 'posts': { '$slice': max_location_posts } })), res_loc)
-
+  def build_response(uid, now, mf, res_loc, res_loc_pop = None):
     print >> sys.stderr, "[server] looking up top users"
     top_users = {}
     for k,s,v in res_loc:
@@ -203,21 +190,13 @@ if __name__ == '__main__':
       src = m.images['standard_resolution'].url
       return { 'src': src, 'score': score, 'results': data }
 
-    print >> sys.stderr, "[server] looking up styles"
-    res_style = []
-    for m in mf:
-      res = style_cache_collection.find_one({ '_id': m.id })
-      if res is not None:
-        res_style.append(get_results(m, res['result']))
-    res_style = sorted(res_style, key = lambda x: x['score'])[:10]
-
     print >> sys.stderr, "[server] looking up places"
     res_place = []
     for m in mf:
       res = place_cache_collection.find_one({ '_id': m.id })
       if res is not None:
         res_place.append(get_results(m, res['result']))
-    res_place = sorted(res_place, key = lambda x: x['score'])[:10]
+    res_place = sorted(res_place, key = lambda x: x['score'], reverse = True)[:20]
 
     print >> sys.stderr, "[server] looking up objects"
     res_object = []
@@ -225,8 +204,29 @@ if __name__ == '__main__':
       res = object_cache_collection.find_one({ '_id': m.id })
       if res is not None:
         res_object.append(get_results(m, res['result']))
-    res_object = sorted(res_object, key = lambda x: x['score'])[:10]
+    res_object = sorted(res_object, key = lambda x: x['score'], reverse = True)[:20]
 
+    print >> sys.stderr, "[server] finding top tags"
+    res_tags = {}
+    for m in mf:
+      for t in m.tags:
+	k = t.name
+        if k not in res_tags:
+          res_tags[k] = 0
+        res_tags[k] = res_tags[k] + 1
+    res_tags = sorted(res_tags.items(), key = lambda x: x[1], reverse=True)[:20]
+
+    # XXX BAD BAD BAD, but running out of time
+    def unique_posts(posts):
+      visited = set()
+      res = []
+      for p in posts:
+        if p['uid'] not in visited:
+          visited.add(p['uid'])
+          res.append(p)
+      return res
+
+    print >> sys.stderr, "[server] returning result"
     return { 
       'id': uid,
       'latency': (time.time() - now) * 1000,
@@ -234,7 +234,7 @@ if __name__ == '__main__':
       'n': len(mf),
       'objects': res_object,
       'places': res_place,
-      'styles': res_style,
+      'tags': [ { 'name': x[0], 'score': x[1] } for x in res_tags ],
       'users': [
         { 'id': k, 
           'name': v['name'] if 'name' in v else 'instagram_user', 
@@ -248,8 +248,78 @@ if __name__ == '__main__':
         { 'id': k, 
           'name': "%s, %s" % (v['city'], v['country']), 
           'score': s, 
-          'posts': v['posts'] 
-          } for k,s,v in res_loc ] }
+          'posts': unique_posts(v['posts'])
+          } for k,s,v in res_loc ],
+      'popular_locations': [ 
+        { 'id': k, 
+          'name': "%s, %s" % (v['city'], v['country']), 
+          'score': s, 
+          'posts': unique_posts(v['posts'])
+          } for k,s,v in res_loc_pop ] }
+
+  @route('/random/<access>/<uid>')
+  def predict(uid, access):
+    now = time.time()
+
+    print >> sys.stderr, "[server] random request: %s" % uid
+    print >> sys.stderr, "[server] randomly generating locations"
+    mf, res_loc = server.predict(uid, access)
+    # proceed to discard the results
+    res_loc = [ (x['_id'], random.random(), x) for x in location_collection.find() ]
+    res_loc = filter(lambda x: 'posts' in x[2] and len(x[2]['posts']) > 0, res_loc)
+    res_loc = sorted(res_loc, key = lambda x: x[1], reverse = True)[:20]
+
+    return build_response(uid, now, mf, res_loc)
+
+  @route('/popular/<access>/<uid>')
+  def predict(uid, access):
+    now = time.time()
+
+    destinations = [ 
+      'Marrakech', 'Siem Reap', 'Istanbul', 'Hanoi', 'Prague', 'London', 'Rome', 'Buenos Aires',
+      'Paris', 'Cape Town', 'New York', 'Zurich', 'Barcelona', 'Nevsehir', 'Cusco', 'St. Petersburg',
+      'Bangkok', 'Kathmandu', 'Athens', 'Budapest' ]
+
+    print >> sys.stderr, "[server] popular request: %s" % uid
+    print >> sys.stderr, "[server] generating popular locations"
+    mf, res_loc = server.predict(uid, access)
+    # proceed to discard the results
+    res_loc = []
+    for d in destinations:
+      x = location_collection.find_one({ 'city': d })
+      print x
+      res_loc.append((x['_id'], 0, x))
+
+    return build_response(uid, now, mf, res_loc)
+
+  @route('/predict/<access>/<uid>')
+  def predict(uid, access):
+    now = time.time()
+    th = 0.0
+    if 'th' in request.query:
+      th = float(request.query['th'])
+
+    print >> sys.stderr, "[server] predict request: %s, th=%d" % (uid, th)
+    print >> sys.stderr, "[server] predicting locations"
+    mf, res_loc = server.predict(uid, access)
+    res_loc = filter(lambda x: x[1] > th, res_loc)
+    # Augment our result with the location information
+    res_loc = map(lambda x: (x[0], x[1], location_collection.find_one(
+      { "_id": int(x[0]) }, { 'posts': { '$slice': max_location_posts } })), res_loc)
+
+    destinations = [ 
+      'Marrakech', 'Siem Reap', 'Istanbul', 'Hanoi', 'Prague', 'London', 'Rome', 'Buenos Aires',
+      'Paris', 'Cape Town', 'New York', 'Zurich', 'Barcelona', 'Nevsehir', 'Cusco', 'St. Petersburg',
+      'Bangkok', 'Kathmandu', 'Athens', 'Budapest' ]
+
+    print >> sys.stderr, "[server] generating popular locations"
+    # proceed to discard the results
+    res_loc_pop = []
+    for d in destinations:
+      x = location_collection.find_one({ 'city': d })
+      res_loc_pop.append((x['_id'], 0, x))
+
+    return build_response(uid, now, mf, res_loc, res_loc_pop)
 
   port = args.port if args.port is not None else config.getint('server', 'port')
   print >> sys.stderr, "[server] Starting server at port %d" % port
