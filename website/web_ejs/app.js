@@ -106,16 +106,25 @@ app.get('/', function(req, res){
 //   res.render('main', { user: req.user, locations: locations, users: users});
 // });
 
-function renderMain(req, res, error, response, body) {
+function render(view, req, res, error, response, body) {
   if (!error && response.statusCode == 200) {
     var data_json = JSON.parse(body);
     var locations = data_json.locations;
+    var popular_locations = data_json.popular_locations || [];
     var users = data_json.users;
     var objects = data_json.objects;
     var places = data_json.places;
     var tags = data_json.tags;
 
-    res.render('main', { user: req.user, locations: locations, users: users, objects: objects, tags: tags, places: places});
+    res.render(view, { 
+      user: req.user,
+      locations: locations,
+      popular_locations: popular_locations,
+      users: users,
+      objects: objects,
+      tags: tags,
+      places: places
+    });
   } else {
     res.send(response ? response.statusCode : 500, error)
   }
@@ -125,26 +134,26 @@ function renderMain(req, res, error, response, body) {
 app.get('/main', ensureAuthenticated, function(req, res){
   var request_url = 'http://dgkng.com:3000/predict/'+req.session.accessToken+'/'+req.user.id;
   console.log(request_url);
-  request(request_url, function (err, response, body) { renderMain(req, res, err, response, body) })
+  request(request_url, function (err, response, body) { render('test', req, res, err, response, body) })
 });
 
 app.get('/random', ensureAuthenticated, function(req, res){
   var request_url = 'http://dgkng.com:3000/random/'+req.session.accessToken+'/'+req.user.id;
   console.log(request_url);
-  request(request_url, function (err, response, body) { renderMain(req, res, err, response, body) })
+  request(request_url, function (err, response, body) { render('main', req, res, err, response, body) })
 });
 
 app.get('/popular', ensureAuthenticated, function(req, res){
   var request_url = 'http://dgkng.com:3000/popular/'+req.session.accessToken+'/'+req.user.id;
   console.log(request_url);
-  request(request_url, function (err, response, body) { renderMain(req, res, err, response, body) })
+  request(request_url, function (err, response, body) { render('main', req, res, err, response, body) })
 });
 
 //API call to obtain results
 app.get('/main/:id', ensureAuthenticated, function(req, res){
   var request_url = 'http://dgkng.com:3000/predict/'+req.session.accessToken+'/'+req.params.id;
   console.log(request_url);
-  request(request_url, function (err, response, body) { renderMain(req, res, err, response, body) })
+  request(request_url, function (err, response, body) { render('main', req, res, err, response, body) })
 });
 
 //go to static detailed explanation page
