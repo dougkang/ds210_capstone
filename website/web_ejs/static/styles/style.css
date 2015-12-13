@@ -94,6 +94,10 @@
   text-align: center;
 }
 
+.model.left {
+  border-right: solid #eee 1px;
+}
+
 #img-row{
   margin:20px 0px;
 }
