@@ -23,8 +23,6 @@ def post_img(df, vocab_path, url, cache = None, **kwargs):
   print y_loc.shape
   print df_img.head()
 
-  print y_loc
-
   return (X, y_loc, extractor)
 
 def user_img(df, vocab_path, url, cache = None, loc_only = True, **kwargs):
