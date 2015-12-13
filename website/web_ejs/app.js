@@ -106,58 +106,45 @@ app.get('/', function(req, res){
 //   res.render('main', { user: req.user, locations: locations, users: users});
 // });
 
+function renderMain(req, res, error, response, body) {
+  if (!error && response.statusCode == 200) {
+    var data_json = JSON.parse(body);
+    var locations = data_json.locations;
+    var users = data_json.users;
+    var objects = data_json.objects;
+    var places = data_json.places;
+    var tags = data_json.tags;
+
+    res.render('main', { user: req.user, locations: locations, users: users, objects: objects, tags: tags, places: places});
+  } else {
+    res.send(response ? response.statusCode : 500, error)
+  }
+}
 
 //version that hits doug's server
 app.get('/main', ensureAuthenticated, function(req, res){
+  var request_url = 'http://dgkng.com:3000/predict/'+req.session.accessToken+'/'+req.user.id;
+  console.log(request_url);
+  request(request_url, function (err, response, body) { renderMain(req, res, err, response, body) })
+});
 
-  if (real_data){
-    var request_url = 'http://dgkng.com:3000/predict/'+req.session.accessToken+'/'+req.user.id;
-    console.log(request_url);  //http://dgkng.com:3000/predict/49795492.aa0986f.971b538159da4711bc1b7bc48defad31/49795492
-    request(request_url, function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-        var data_json = JSON.parse(body);
-        var locations = data_json.locations;
-        var users = data_json.users;
-        var objects = data_json.objects;
-        var places = data_json.places;
-        var tags = data_json.tags;
+app.get('/random', ensureAuthenticated, function(req, res){
+  var request_url = 'http://dgkng.com:3000/random/'+req.session.accessToken+'/'+req.user.id;
+  console.log(request_url);
+  request(request_url, function (err, response, body) { renderMain(req, res, err, response, body) })
+});
 
-        res.render('main', { user: req.user, locations: locations, users: users, objects: objects, tags: tags, places: places});
-      } else {
-        res.send(response ? response.statusCode : 500, error)
-      }
-    })
-  }
-  else{ //using dummy data
-    var locations = data.locations;
-    var users = data.users;
-    var objects = data.objects;
-    var tags = data.tags;
-    var places = data.places;
-
-    res.render('main', { user: req.user, locations: locations, users: users, objects: objects, tags: tags, places: places});
-  }
-
-
+app.get('/popular', ensureAuthenticated, function(req, res){
+  var request_url = 'http://dgkng.com:3000/popular/'+req.session.accessToken+'/'+req.user.id;
+  console.log(request_url);
+  request(request_url, function (err, response, body) { renderMain(req, res, err, response, body) })
 });
 
 //API call to obtain results
 app.get('/main/:id', ensureAuthenticated, function(req, res){
   var request_url = 'http://dgkng.com:3000/predict/'+req.session.accessToken+'/'+req.params.id;
   console.log(request_url);
-  request(request_url, function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-      var data_json = JSON.parse(body);
-      var locations = data_json.locations;
-      var users = data_json.users;
-      var objects = data_json.objects;
-      var tags = data_json.tags;
-      var places = data_json.places;
-      res.render('main', { user: req.user, locations: locations, users: users, objects: objects, tags: tags, places: places});
-    } else {
-      res.send(response ? response.statusCode : 500, error)
-    }
-  })
+  request(request_url, function (err, response, body) { renderMain(req, res, err, response, body) })
 });
 
 

@@ -35,7 +35,6 @@
       <div id='img-row' class='row'>
         <div class='col-sm-2'>
           <p class='city-name'><%=locations[i].name%></p>
-          <p class='score'>Score: <%= Math.round(locations[i].score*10000) %></p>
         </div>
 
         <div class='col-sm-10'>
@@ -123,7 +122,6 @@
       <div id='img-row' class='row'>
         <div class='col-sm-2'>
           <p class='instagrammer-name'><a href='https://www.instagram.com/<%= users[i].name%>'>@<%=users[i].name%></a></p>
-          <p class='score'>Score: <%= Math.round(users[i].score*10000) %></p>
         </div>
         <div class='col-sm-10'>
           <% if (users[i]) { for (var j=0; j<Math.min(users[i].posts.length, 11); j++) { %>
