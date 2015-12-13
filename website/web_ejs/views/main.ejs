@@ -26,11 +26,15 @@
     </nav>
 
     <div id='sub-container'>
+      <div class='row'><h4 class='col-sm-12'>This recommedation engine provides you the top recommended cities based on your personal preferences that we can learn from your Instagram account. The images are posted by users who are likely to be similar to you. Please be patient as it may take up to 1-2 min to process the results. </h3></div>
 
       <!-- TopRecommended Cities -->
-      <div class='row'><h3 class='col-sm-12'>Our Top Recommended Cities for You</h3></div>
-      <hr>
 
+      <div class='row'><h3 class='col-sm-12'>Our Top Recommended Cities for You</h3></div>
+<% if (objects.length < 10){ %>      
+      <div class="alert alert-warning" role="alert"><b>Warning:</b> Your results may not be optimal as your Instagram account does not have sufficient number of posts.</div>
+<% } %>
+      <hr>
       <% for (var i=0; i<Math.min(locations.length, 20); i++) { %>
       <div id='img-row' class='row'>
         <div class='col-sm-2'>
@@ -56,7 +60,10 @@
             How did we make these personalized recommendations?
           </h3>
           <h4 class='description'>
-            Step 1: Our recommendation engine analyzes your Instagram images and textual details of your post to discover your potential preferences. We would like to showcases our image processing attempt, which is one important component of our recommendation engine:
+            <a href='/details' class='details-link'>Please learn the full details by clicking here.</a> We would also like to showcase the behind-the-scene analyses performed by the recommendation engine below.           
+          </h4>
+          <h4 class='description'>
+            Showcase 1: Our recommendation engine analyzes your Instagram images and textual details of your post to discover your potential preferences. We would like to showcases our image processing attempt, which is one important component of our recommendation engine:
           </h4>
         </div>
       </div>
@@ -110,7 +117,7 @@
       <div class='row'>
         <div class='col-sm-12'>
           <h4 class='description'>
-            Step 2: We use this information to find Instagrammers who are most similar to you. This allows us to recommend places that are related to your preferences and are photographed by Instagrammers similar to you. Here is the showcase for the predicted similar Instagram users, which is another important component of our recommendation engine:
+            Showcase 2: We use this information to find Instagrammers who are most similar to you. This allows us to recommend places that are related to your preferences and are photographed by Instagrammers similar to you. Here is the showcase for the predicted similar Instagram users, which is another important component of our recommendation engine:
           </h4>
         </div>
       </div>

@@ -147,6 +147,10 @@ app.get('/main/:id', ensureAuthenticated, function(req, res){
   request(request_url, function (err, response, body) { renderMain(req, res, err, response, body) })
 });
 
+//go to static detailed explanation page
+app.get('/details', function(req, res){
+  res.render('details');
+});
 
 /// API:    /main/user => 
 
