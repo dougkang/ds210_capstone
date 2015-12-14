@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>InstaPlaces Main</title>
+  <link rel="stylesheet" type="text/css" href="/styles/style.css">
+  <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css">
+  <base href="/">
+  <script type="text/javascript" src='/js/jquery-1.11.1.min.js'></script>
+  <script type="text/javascript" src='/bootstrap/js/bootstrap.min.js'></script>
+</head>
+<body>
+  <!-- <p>ID: <%= user.id %></p> -->
+  <!-- <p>Locations: <%= locations %></p> -->
+
+  <div id='main-container' class="container-fluid">
+    <nav class="navbar navbar-default">
+      <div class="navbar-header">
+        <a id='title' class="navbar-brand" href="#">&nbsp;<span id='title-name'>InstaPlaces</span> : The Future of Recommendations</a>
+      </div>
+      <div>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href='#'>Hi, @<%= user.username %>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |</a></li>
+          <li id='logout-btn'><a href="/logout">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div id='sub-container'>
+      <div class='row'>
+        <div class='model left col-sm-6'>
+          <div class='row'><h3 class='col-sm-12'>Model A</h3></div>
+          <hr>
+          <% for (var i=0; i<Math.min(locations.length, 20); i++) { %>
+          <div id='img-row' class='row'>
+            <div>
+              <p class='city-name'><%=(i+1) + '. ' + locations[i].name%></p>
+            </div>
+          </div>
+          <hr>
+          <% }  %>    
+        </div>
+        <div class='model right col-sm-6'>
+          <div class='row'><h3 class='col-sm-12'>Model B</h3></div>
+          <hr>
+          <% for (var i=0; i<Math.min(popular_locations.length, 20); i++) { %>
+          <div id='img-row' class='row'>
+            <div>
+              <p class='city-name'><%=(i+1) + '. ' + popular_locations[i].name%></p>
+            </div>
+          </div> 
+          <hr>
+          <% }  %>    
+        </div>
+      </div>
+    </div>  <!-- end of sub-container -->
+  </div><!-- /.container-fluid -->
+
+</body>
+</html>
