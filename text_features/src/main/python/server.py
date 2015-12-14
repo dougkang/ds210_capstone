@@ -316,7 +316,7 @@ if __name__ == '__main__':
     # proceed to discard the results
     res_loc_pop = []
     for d in destinations:
-      x = location_collection.find_one({ 'city': d })
+      x = location_collection.find_one({ 'city': d }, sort = [ ('posts', -1) ])
       res_loc_pop.append((x['_id'], 0, x))
 
     return build_response(uid, now, mf, res_loc, res_loc_pop)
