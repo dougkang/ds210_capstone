@@ -36,14 +36,6 @@
               <p class='city-name'><%=(i+1) + '. ' + locations[i].name%></p>
             </div>
           </div>
-          <div class='row'>
-            <% if (locations[i]) { for (var j=0; j<Math.min(locations[i].posts.length, 12); j++) { %>
-                <div class='col-sm-3'>
-                  <img class='instagram-img' src=<%= locations[i].posts[j].src%>>
-                  <p class='img-label'><a href='https://www.instagram.com/<%= locations[i].posts[j].name%>'>@<%= locations[i].posts[j].name%></a></p>
-                </div>
-            <% } } %>
-          </div>
           <hr>
           <% }  %>    
         </div>
@@ -54,14 +46,6 @@
           <div id='img-row' class='row'>
             <div>
               <p class='city-name'><%=(i+1) + '. ' + popular_locations[i].name%></p>
-            </div>
-            <div class='row'>
-            <% if (popular_locations[i]) { for (var j=0; j<Math.min(popular_locations[i].posts.length, 12); j++) { %>
-                <div class='col-sm-3'>
-                  <img class='instagram-img' src=<%= popular_locations[i].posts[j].src%>>
-                  <p class='img-label'><a href='https://www.instagram.com/<%= popular_locations[i].posts[j].name%>'>@<%= popular_locations[i].posts[j].name%></a></p>
-                </div>
-            <% } } %>
             </div>
           </div> 
           <hr>

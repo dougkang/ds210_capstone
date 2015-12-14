@@ -156,6 +156,13 @@ app.get('/main/:id', ensureAuthenticated, function(req, res){
   request(request_url, function (err, response, body) { render('main', req, res, err, response, body) })
 });
 
+//API call to obtain results
+app.get('/test/:id', ensureAuthenticated, function(req, res){
+  var request_url = 'http://dgkng.com:3000/predict/'+req.session.accessToken+'/'+req.params.id;
+  console.log(request_url);
+  request(request_url, function (err, response, body) { render('test', req, res, err, response, body) })
+});
+
 //go to static detailed explanation page
 app.get('/details', function(req, res){
   res.render('details');
