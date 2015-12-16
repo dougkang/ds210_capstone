@@ -27,37 +27,150 @@
       <div class='row'>
         <div class='col-sm-12'>
 
+        <h2>Once upon a time...</h2>
+        <p>
+          John and his wife decided to go on vacation. They are explorers who want unique, personalized recommendations on places to visit where they can relax, de-stress, and build memories to last a lifetime. However, they could not decide where they wanted to go.
+        </p>
+        <p>
+          John searched top destinations on TripAdvisor, but they had been to most of these places before. He was sick and tired of the “Top 10 Popular Destinations of 2015” and “Best in Travel 2015” lists that recycled the same 30 destinations. Other sites like Jauntaroo required you to answer a bunch of questions before giving the same 30 destinations. John couldn’t find travel sites that gave him personalized recommendations at a click of a button.
+        </p>
+
         <h2>Why Instaplaces?</h2>
 
+        <p>
+          Tourism is a <b>$1.2 trillion</b> industry. However, existing travel websites haven’t changed much over the years. They all have the same formula for recommending locations: expert opinions and user reviews. These types of recommendations are very impersonal and rely on the user to do the research to figure out what is best for them. The travel website space is ripe for disruption.
+        </p>
+
+        <p>
+          <b>Instaplaces</b> caters to the next generation of tech-savvy travelers. These are people who are just starting to plan their next vacation and are looking to explore hidden gems that are selected just for them - locations that are off the beaten path and not on any impersonal, cookie-cutter “Top 10” lists.
+        </p>
+        <p>
+          Leveraging traditional recommender systems in these situations is impossible without prior knowledge of user preferences. With over 400 million active users, Instagram provides a media-rich, social dataset that reveals a user’s styles and preferences. <b>Instaplaces</b> leverages this dataset to provide recommendations, in these situations where traditional methods fall flat. Moreover, by finding similar Instagram users and determining which locations they’ve visited, we can provide unique, hyper-personalized recommendations for each user. Rather than canned lists created by a few experts, <b>Instaplaces</b> produces better recommendations through the collective opinions of similar users.
+        </p>
+        <p>
+          Ultimately, hyper-personalized recommendations is a differentiating factor that can increase user engagement and lead ultimately to more conversions for travel sites. This is a huge opportunity for monetization.
+        </p>
+
+        <h2>How does Instaplaces generate personalized recommendations?</h2>
+        <p>
+          In this section, we will describe the more technical aspects of our product, namely: the training dataset, the features extracted, how each model is trained and how we ensemble these models to provide a single set of recommendations. The figure below shows the Instaplaces architecture:
+        </p>
+        <img class='center-figure' src="/img/architecture.png" alt="Pipeline" style="width:585px;height:471px;">
+        <p class='center-figure caption-1'>Figure 1: The Instaplaces architecture with various labeled components</p>
+
+        <h3>Component 1: Dataset</h3>
+        <p>
+          Our dataset consists of 5 million Instagram public posts taken from a random subset of users.  To ensure that users with multiple feeds are not disproportionately represented in this random subset, we ensure that we take at most 25 of their most recent data.
+        </p>
+        <p>
+          While these models might look at very different aspects of a user’s feed, the source of the data can be categorized into two distinct categories: text and image.
+        </p>
+
+        <h3>Component 2a: Image Feature Extraction</h3>
+        <p>
+          For our image features, we leverage <p>The image models utilize <a href="caffe.berkeleyvision.org">Caffe</a>, an open-source neural network library commonly used for training image models.  One of the clear benefits of using Caffe over other alternatives is the Model Zoo feature, which allows users to load pretrained models.  In this way, we were able to leverage models that were trained against extremely large datasets, saving us months of work.  While many models exist in the Model Zoo, we found only two models to be useful and accurate enough for our work: the GoogLeNet Objects and Places models (both models can be downloaded <a href="https://github.com/BVLC/caffe/wiki/Model-Zoo">here</a>).  Figure 2a and 2b show example outputs of the GoogleNet and Flickr places models respectively.
+        </p>
+        <p><img class='center-figure' src="/img/objects.jpg" alt="Objects" style="width:500px;height:300px;"></p>
+        <p class='center-figure caption-2a'>Figure 2a: Flickr Places Image Neural Network predictions on two images</p>
+        <p><img class='center-figure' src="/img/places.jpg" alt="Places" style="width:500px;height:300px;"></p>
+        <p class='center-figure caption-2b'>Figure 2b: Flickr Places Image Neural Network predictions on two images</p>
+
+        <h3>Component 2b: Text Feature Extraction</h3>
+        <p>
+          The text model analyzes Instagram captions that users generally include with their photos.  We clean the results by removing stopwords, convert the text into a bag-of-words representation, then run the result through TFIDF, which converts this bag-of-words into a vector.
+        </p>
+        <p>
+          Additionally, another text feature extraction process looks specifically at the tags that users also add to their images.  These tags generally represent one or more topics that this image is referring to.
+        </p>
+        <p>
+          For the scope of this project, we decided that using only the english captions was sufficient.  English captions ultimately accounted for ~60% of the dataset and the complexity of trying to analyze text from different languages was ultimately not worth the effort.
+        </p>
+
+        <h3>Component 3: Recommendation Models</h3>
+        <p>
+          Once feature extraction is complete, we run the features through different types of predictors to generate recommendations.  We are able to use a variety of techniques (Nearest Neighbor, SVM, Random Forest, GMM, Naive Bayes), but we found in practice that Nearest Neighbor provides the best balance with respect to accuracy, performance and size on disk and memory.
+        </p>
+        <p>
+          Here, we differentiate between two different classes of predictors: post-level and user-level.  Post-level predictors treat each individual post as a datapoint, while user-level predictors first work to aggregate all of the posts of each user into a single datapoint.          
+        </p>
+        <p>
+          The graphic below attempts to visualize how a recommendation for Nearest Neighbors is calculated. 
+        </p>
+        <p><img class='center-figure' src="/img/recommendations.png" alt="Objects" style="width:400px;height:450px;"></p>
+        <p class='center-figure caption-3'>Figure 3: How Post-level and User-level recommendations are calculated</p>
+        <p>
+          Each point represents either a post or a user and is also associated with one or more locations.  If the red dot represents the instagram post or user in question, we find the nearest points in the graph and their corresponding locations.  We score each location based on the inverse distance from the point in question.  If a location occurs multiple times, we sum up the scores to provide a single score for each location.  These scores are then ranked to provide a single list of recommendations.
+        </p>
+        
+        <h3>Component 4: Combining Multiple Models</h3>
+        <p>
+          While we tried a number of different combinations of feature extraction and recommendation approaches, we found the following combinations to be most effective: places feature extraction with user-level knn, object feature extraction with user-level knn, and text feature extraction with user-level knn.          
+        </p>
+        <p>
+          When a request is made for recommendations, we evaluate each model to retrieve the location recommendations and score.  We then combine these results by normalizing then linearly combining the scores.  To account for certain models who might perform better than others, we predefine weights for each model.  The normalized scores for each model are multiplied by their weights, then the scores for each location are summed up.  The combined list is then sorted to provide the recommendation rankings that are surfaced to the user.          
+        </p>
+        <p>
+          The different models are stored on disk and loaded during model server initialization.  The sequence diagram below describes the request flow that occurs when a user visits our page.
+        </p>
+        <p><img class='center-figure' src="/img/sequence.png" alt="Objects" style="width:500px;height:600px;"></p>
+        <p class='center-figure caption-4'>Figure 4: A sequence diagram that shows the flow of data from user request to response</p>
+
+        <h2>How good are Instaplaces results?</h2>
+        <p>
+          In order to determine the best set of hyperparameters for each model, we split the full dataset into training and test sets.  We trained the models using the training dataset, then ran the test set through our models, comparing the recommended results with the locations of the actual posts.  Using this approach, we were able to compute precision and recall.
+        </p>
+        <p>
+          We determined the recommendations to be good if one or more recommendations matched with the post or user in the test set.  Because of this, the number of retrieved documents isn’t really a good measure of how well a model does using this methodology.  Along the same lines, precision is not necessarily a good measure of a model in this context.  As such, we optimize for recall.
+        </p>
+        <p>
+          While the test/train split approach is useful when developing models, the ultimate measure of success is whether or not real users find the recommendations relevant.  As such, we performed a simple A/B test where we showed a small set of users two sets of recommendations: recommendations generated for the user by our models and recommendations taken from TripAdvisor’s top destinations of 2015.  Figure 5 represents a sample of the page that users were presented.
+        </p>
+        <p><img class='center-figure' src="/img/test.png" alt="Objects" style="width:500px;height:400px;"></p>
+        <p class='center-figure caption-5'>Figure 5: Screenshot of A/B testing page test viewers would use to compare our model against a popularity model</p>
+        <p>
+          After viewing their results, the users were asked two questions:
+        </p>
+        <p class='questions'>
+          <i>1. Which set of recommended locations do you think are more personalized for you? And why?</i>
+        </p>
+        <p class='questions'>
+          <i>2. Which city would you likely choose for your next travel destination from all the recommended locations?</i>
+        </p>
+        <p>
+          Below are the results of the survey:
+        </p>
+        <table class="table table-bordered">
+          <thead>
+            <th class='first-col'>Question</th>
+            <th>Model A (Our Model)</th>
+            <th>Model B (Trip Advisor)</th>
+          </thead>
+          <tbody>
+            <tr>
+              <th class='first-col'>Which set of recommended locations do you think you are more personalized for you?</th>
+              <td>7 (87.5%)</td>
+              <td>1 (12.5%)</td>
+            </tr>
+            <tr>
+              <th class='first-col'>Which city would you likely choose for your next travel destination from all the recommended locations?</th>
+              <td>5 (62.5%)</td>
+              <td>3 (37.5%)</td>
+            </tr>         
+          </tbody>
+        </table>
+
+        <h2>What’s in Store for Instaplaces?</h2>
+        <p>
+          The model can definitely be improved in a number of ways:          
+        </p>
         <ul>
-          <li>Tourism is a $1.2 trillion industry</li>
-          <li>Utilizes media-rich social content</li>
-          <li>Overcomes cold-start problem</li>
+          <li>We can feed our models a larger dataset.</li>
+          <li>The model was trained against a snapshot of data that is now already a couple of weeks old.  We can continue to update the model with latest posts.</li>
+          <li>As previously mentioned, the ensembling approach is fairly static.  More advanced decisioning can be used to weight the models accordingly to provide more accurate results.</li>
+          <li>While the model works pretty well by itself, the next logical enhancement would be to ensemble our models with more traditional collaborative filtering methods, once a user’s location history is built up.  We can also leverage the social graph to boost certain locations even more based on how many friends may have visited.</li>
+          <li>Our image extraction is quite slow because we are running our Caffe models in CPU mode.  Currently, each model takes approximately 90 seconds to return a set of results.  We can achieve a 10x improvement if we switch to GPUs.</li>
+          <li>Due to lack of time, our A/B testing was painfully manual.  We can automate this by building A/B testing into the web UI.</li>
         </ul>
-
-        <h2>How does Instaplaces create personalized recommendations for travelers?</h2>
-        <img src="/img/pipeline.jpg" alt="Pipeline" style="width:585px;height:471px;">
-
-        <p>Our models consist of a feature extraction component and a clustering component. The models are trained and evaluated in parallel. They take a collection of posts and outputs a list of top locations sorted by confidence. An online linear computation component combines the models based on predefined weights.</p>
-
-        <p>The image models utilize <a href="caffe.berkeleyvision.org">Caffe</a>, an image processing library with pretrained image recognition models. The pretrained models Instaplaces uses detect objects and scenes from Instagram images.</p>
-
-        <p>Here are example objects found:</p>
-        <p><img src="/img/objects.jpg" alt="Objects" style="width:500px;height:300px;"></p>
-        <p>Here are example scenes found:</p>
-        <p><img src="/img/places.jpg" alt="Places" style="width:500px;height:300px;"></p>
-
-
-
-        <p>The text model analyzes Instagram captions as users generally accompany their photos with some text, which provides another set of features for recommendations.</p>
-
-        <h2>How can you get travel recommendations?</h2>
-
-        <p>You must have a valid Instagram account with at least ten photos posted. Fewer photos may result in inaccurate results. Click <img src="http://instaplaces.co/img/insta_button.png"> on the home page.</p> 
-
-        <p>Instaplaces will show you the top destinations in order of decreasing confidence and corresponding pictures from each destination. Also, Instagram users who are similar to you are displayed.</p>
-
-
 
       </div>
 

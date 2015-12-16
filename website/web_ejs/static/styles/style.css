@@ -94,10 +94,6 @@
   text-align: center;
 }
 
-.model.left {
-  border-right: solid #eee 1px;
-}
-
 #img-row{
   margin:20px 0px;
 }
@@ -155,6 +151,22 @@
   text-decoration: underline;
 }
 
+/*DETAILS PAGE*/
+.center-figure{
+  display: block;
+  margin: 10px auto;
+  font-weight: bold;
+}
+.caption-1 {width:65%;}
+.caption-2a {width:65%;}
+.caption-2b {width:65%;}
+.caption-3 {width:65%;margin-top: -20px}
+.caption-4 {width:80%;margin-top: -5px}
+.caption-5 {width:100%}
+
+.first-col{
+  width:350px;
+}
 
 /* OLD REFERENCES */
 /*

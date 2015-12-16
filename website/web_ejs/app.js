@@ -134,7 +134,8 @@ function render(view, req, res, error, response, body) {
 app.get('/main', ensureAuthenticated, function(req, res){
   var request_url = 'http://dgkng.com:3000/predict/'+req.session.accessToken+'/'+req.user.id;
   console.log(request_url);
-  request(request_url, function (err, response, body) { render('test', req, res, err, response, body) })
+  // request(request_url, function (err, response, body) { render('test', req, res, err, response, body) })
+  request(request_url, function (err, response, body) { render('main', req, res, err, response, body) })
 });
 
 app.get('/random', ensureAuthenticated, function(req, res){
