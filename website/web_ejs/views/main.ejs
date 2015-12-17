@@ -44,7 +44,7 @@
         <div class='col-sm-10'>
         <% if (locations[i]) { for (var j=0; j<Math.min(locations[i].posts.length, 12); j++) { %>
             <div class='col-sm-2'>
-              <img class='instagram-img' src=<%= locations[i].posts[j].src%>>
+              <img class='instagram-img' src=<%= locations[i].posts[j].src%> onerror="this.src='img/notfound.jpg'">
               <p class='img-label'><a href='https://www.instagram.com/<%= locations[i].posts[j].name%>'>@<%= locations[i].posts[j].name%></a></p>
             </div>
         <% } } %>
@@ -75,7 +75,7 @@
 
       <% for (var i=0; i<Math.min(objects.length, 12); i++) { %>
         <div class='col-sm-2'>
-          <img class='instagram-img' src="<%= objects[i].src %>">
+          <img class='instagram-img' src="<%= objects[i].src %>" onerror="this.src='img/notfound.jpg'">
           <% for (var j=0; j<Math.min(objects[i].results.length, 3); j++) { %>
           <p class='img-label'><%= objects[i].results[j].name.slice(0,20) %></p>
           <% } %>
@@ -91,7 +91,7 @@
 
       <% for (var i=0; i<Math.min(places.length, 12); i++) { %>
         <div class='col-sm-2'>
-          <img class='instagram-img' src="<%= places[i].src %>">
+          <img class='instagram-img' src="<%= places[i].src %>" onerror="this.src='img/notfound.jpg'">
           <% for (var j=0; j<Math.min(places[i].results.length, 3); j++) { %>
           <p class='img-label'><%= places[i].results[j].id.slice(0,20) %></p>
           <% } %>
@@ -133,7 +133,7 @@
         <div class='col-sm-10'>
           <% if (users[i]) { for (var j=0; j<Math.min(users[i].posts.length, 11); j++) { %>
            <div class='col-sm-2'>
-             <img class='instagram-img' src=<%= users[i].posts[j].src%>>
+             <img class='instagram-img' src=<%= users[i].posts[j].src%> onerror="this.src='img/notfound.jpg'">
           </div>
           <% } } %>
         </div>
