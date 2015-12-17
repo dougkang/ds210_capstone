@@ -25,9 +25,11 @@
 
     <div id='sub-container'>
       <div class='row'>
-        <div class='col-sm-12'>
-
+        <img height=600px src="img/adventures.png">
         <h2>Once upon a time...</h2>
+      </div>
+      <div class='row'>
+        <div class='col-sm-12'>
         <p>
           John and his wife decided to go on vacation. They are explorers who want unique, personalized recommendations on places to visit where they can relax, de-stress, and build memories to last a lifetime. However, they could not decide where they wanted to go.
         </p>
@@ -35,6 +37,11 @@
           John searched top destinations on TripAdvisor, but they had been to most of these places before. He was sick and tired of the “Top 10 Popular Destinations of 2015” and “Best in Travel 2015” lists that recycled the same 30 destinations. Other sites like Jauntaroo required you to answer a bunch of questions before giving the same 30 destinations. John couldn’t find travel sites that gave him personalized recommendations at a click of a button.
         </p>
 
+        </div>
+      </div>
+      <hr>
+      <div class='row'>
+        <div class='col-sm-12'>
         <h2>Why Instaplaces?</h2>
 
         <p>
@@ -50,7 +57,7 @@
         <p>
           Ultimately, hyper-personalized recommendations is a differentiating factor that can increase user engagement and lead ultimately to more conversions for travel sites. This is a huge opportunity for monetization.
         </p>
-
+        <hr>
         <h2>How does Instaplaces generate personalized recommendations?</h2>
         <p>
           In this section, we will describe the more technical aspects of our product, namely: the training dataset, the features extracted, how each model is trained and how we ensemble these models to provide a single set of recommendations. The figure below shows the Instaplaces architecture:
@@ -114,7 +121,7 @@
         </p>
         <p><img class='center-figure' src="/img/sequence.png" alt="Objects" style="width:500px;height:600px;"></p>
         <p class='center-figure caption-4'>Figure 4: A sequence diagram that shows the flow of data from user request to response</p>
-
+        <hr>
         <h2>How good are Instaplaces results?</h2>
         <p>
           In order to determine the best set of hyperparameters for each model, we split the full dataset into training and test sets.  We trained the models using the training dataset, then ran the test set through our models, comparing the recommended results with the locations of the actual posts.  Using this approach, we were able to compute precision and recall.
@@ -137,7 +144,15 @@
           <i>2. Which city would you likely choose for your next travel destination from all the recommended locations?</i>
         </p>
         <p>
-          Below are the results of the survey:
+          We ran a first cut of these questions against 10 test users, then discussed their choices at length to understand the reasoning behind their decisions.  From this, we were able to learn the following:
+        </p>
+        <ul>
+          <li>Without context, users are inherently biased towards recognizable locations</li>
+          <li>While users tended to say that popular destinations were "better", they ultimately picked locations in the Instaplaces model as their next travel destination</li>
+          <li>After allowed to do some research on the destinations, some users actually flipped their decision to the Instaplaces model as the better recommendations</li>
+        </ul> 
+        <p>
+          We refined the questions a bit then sent it to a larger audience.  Below are the results of the survey:
         </p>
         <table class="table table-bordered">
           <thead>
@@ -148,20 +163,23 @@
           <tbody>
             <tr>
               <th class='first-col'>Which set of recommended locations do you think you are more personalized for you?</th>
-              <td>7 (87.5%)</td>
-              <td>1 (12.5%)</td>
+              <td>10 (50.0%)</td>
+              <td>10 (50.0%)</td>
             </tr>
             <tr>
               <th class='first-col'>Which city would you likely choose for your next travel destination from all the recommended locations?</th>
-              <td>5 (62.5%)</td>
-              <td>3 (37.5%)</td>
+              <td>12 (60.0%)</td>
+              <td>8 (40.0%)</td>
             </tr>         
           </tbody>
         </table>
-
+        <hr>
         <h2>What’s in Store for Instaplaces?</h2>
         <p>
-          The model can definitely be improved in a number of ways:          
+          The next logical step would be for us to build an actual travel website around this model. We can provide additional value to consumers by providing them convenient avenues for researching about the cities recommendated, and flight/hotel information.
+        </p>
+        <p>
+          The model itself can definitely be improved in a number of ways:
         </p>
         <ul>
           <li>We can feed our models a larger dataset.</li>
@@ -171,7 +189,14 @@
           <li>Our image extraction is quite slow because we are running our Caffe models in CPU mode.  Currently, each model takes approximately 90 seconds to return a set of results.  We can achieve a 10x improvement if we switch to GPUs.</li>
           <li>Due to lack of time, our A/B testing was painfully manual.  We can automate this by building A/B testing into the web UI.</li>
         </ul>
-
+        <p>
+          When evaluating our model, we could get more accurate results in a couple of ways:
+        </p>
+        <ul>
+          <li>Better survey design. Needed a bit more time to refine our questions.</li>
+          <li>Conduct survey on the larger sample size.</li>
+          <li>One of the weaknessess to our approach is the failure to take into account the inherent bias towards popular locations.  One way we could combat this is to actually send users to the locations and have them rate their experiences.</li>
+        </ul>
       </div>
 
     </div>  <!-- end of sub-container -->
